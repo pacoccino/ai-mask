@@ -1,0 +1,24 @@
+{
+  "name": "web-ai-app",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension",
+    "build": "parcel build src/manifest.json --config @parcel/config-webextension"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@parcel/config-webextension": "^2.11.0",
+    "@types/chrome": "^0.0.242",
+    "buffer": "^6.0.3",
+    "parcel": "^2.11.0",
+    "process": "^0.11.10",
+    "url": "^0.11.1"
+  },
+  "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.19",
+    "localforage": "^1.10.0",
+    "progressbar.js": "^1.1.0"
+  }
+}
