@@ -1,9 +1,0 @@
-{
-    "extends": "next",
-    "env": {
-        "webextensions": true
-    },
-    "globals": {
-        "chrome": true
-    }
-}
