@@ -1,5 +1,5 @@
 import { ExtensionMessagerClient } from "./ExtensionMessager";
-import { WebMessageResponse } from "./types";
+import { DB_Model, WebMessageResponse } from "./types";
 
 
 export class WebAIClient {
@@ -27,7 +27,7 @@ export class WebAIClient {
         })
     }
 
-    async getModels() {
+    async getModels(): Promise<DB_Model[]> {
         return new Promise((resolve, reject) => {
             this.messager.send(
                 { action: 'getModels' },
