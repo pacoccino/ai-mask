@@ -10,16 +10,17 @@
     "128": "icons/icon-128.png"
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; default-src 'self' data:; connect-src 'self' data: http://localhost:8000 ws://localhost:1234 https://huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://raw.githubusercontent.com"
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; default-src 'self' data:; connect-src 'self' data: http://localhost:3000 http://localhost:3001 ws://localhost:3001 https://huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://raw.githubusercontent.com"
   },
   "action": {
-    "default_title": "Click to open panel"
+    "default_title": "Click to open panel",
+    "default_popup": "src/side_panel/page.html"
   },
   "side_panel": {
-    "default_path": "side_panel/page.html"
+    "default_path": "src/side_panel/page.html"
   },
   "background": {
-    "service_worker": "background/main.ts",
+    "service_worker": "src/background/main.ts",
     "type": "module"
   },
   "permissions": [

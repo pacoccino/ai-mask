@@ -1,4 +1,4 @@
-import { WebAIService } from "@/lib/WebAIService";
+import { WebAIService } from "../lib/WebAIService";
 
 console.log('hello from background')
 

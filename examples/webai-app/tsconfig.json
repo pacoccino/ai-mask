@@ -21,15 +21,16 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
       ],
       "@webai-ext/sdk/*": [
-        "../../../packages/sdk/src/*",
+        "../../packages/sdk/src/*",
       ],
       "@webai-ext/sdk": [
-        "../../../packages/sdk/src/index",
+        "../../packages/sdk/src/index",
       ]
     },
     "types": [

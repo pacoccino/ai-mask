@@ -2,18 +2,18 @@
     "name": "@webai-ext/sdk",
     "source": "src/index.ts",
     "main": "dist/index.js",
+    "module": "dist/index.mjs",
     "types": "dist/types.d.ts",
     "scripts": {
-        "dev": "parcel watch",
+        "dev": "tsup ./src/index.ts --watch --format esm,cjs",
         "clean": "rimraf ./dist ./parcel-cache"
     },
     "dependencies": {
         "@webai-ext/core": "workspace:^"
     },
     "devDependencies": {
-        "@parcel/config-webextension": "^2.11.0",
         "@types/chrome": "^0.0.242",
         "rimraf": "^5.0.5",
-        "parcel": "^2.11.0"
+        "tsup": "^8.0.2"
     }
 }

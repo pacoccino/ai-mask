@@ -1,17 +1,13 @@
 {
     "name": "webai-ext-monorepo",
     "scripts": {
-        "start": "pnpm run --parallel dev",
-        "libs": "parcel watch --host localhost"
+        "dev": "pnpm run --parallel dev"
     },
     "engines": {
         "node": ">=20",
         "pnpm": ">=8"
     },
     "devDependencies": {
-        "@parcel/packager-ts": "^2.11.0",
-        "@parcel/transformer-typescript-types": "^2.11.0",
-        "parcel": "^2.11.0",
         "typescript": "^5.3.3"
     }
 }

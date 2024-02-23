@@ -1,7 +1,7 @@
 import { ChatModule, InitProgressReport } from "@mlc-ai/web-llm";
 
-import { Model, ExtensionMessager, MessagerRequest, MessagerResponse } from "@webai-ext/core";
-import { INITIAL_MODELS, getModel, getModels, setModel, setModels } from "../lib/database";
+import { Model, ExtensionMessager, MessagerRequest, MessagerResponse, AIAction } from "@webai-ext/core";
+import { INITIAL_MODELS, getModel, getModels, setModel, setModels } from "./database";
 
 export class WebAIService {
     chatModule = new ChatModule()
@@ -61,7 +61,7 @@ export class WebAIService {
         this.loadedModel = modelId
     }
 
-    async onPrompt(request: MessagerRequest & { action: 'prompt' }): Promise<MessagerResponse<string>> {
+    async onPrompt(request: AIAction<'prompt'>): Promise<MessagerResponse<string>> {
         if (this.generating) {
             const messageResponse: MessagerResponse = {
                 type: 'error',
@@ -100,7 +100,7 @@ export class WebAIService {
         try {
             switch (request.action) {
                 case 'prompt':
-                    return this.onPrompt(request.data)
+                    return this.onPrompt(request as AIAction<'prompt'>)
                 case 'getModels':
                     return this.onGetModels()
                 default:

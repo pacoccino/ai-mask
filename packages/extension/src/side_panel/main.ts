@@ -1,4 +1,4 @@
-import { getModels } from "@/lib/database";
+import { getModels } from "../lib/database";
 
 
 function setLabel(id: string, text: string) {

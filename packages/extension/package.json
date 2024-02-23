@@ -4,25 +4,25 @@
   "description": "",
   "source": "src/manifest.json",
   "scripts": {
-    "dev": "parcel watch --host localhost",
-    "build": "parcel build",
-    "clean": "rimraf dist .parcel-cache"
+    "dev": "vite --port 3001",
+    "build": "tsc && vite build",
+    "clean": "rimraf dist"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@parcel/config-webextension": "^2.11.0",
     "@types/chrome": "^0.0.242",
     "buffer": "^6.0.3",
-    "parcel": "^2.11.0",
     "process": "^0.11.10",
     "rimraf": "^5.0.5",
-    "url": "^0.11.1"
+    "@crxjs/vite-plugin": "^1.0.14",
+    "@webai-ext/sdk": "workspace:^",
+    "typescript": "^4.5.4",
+    "vite": "^2.9.15"
   },
   "dependencies": {
-    "@webai-ext/core": "workspace:^",
     "@mlc-ai/web-llm": "^0.2.19",
-    "localforage": "^1.10.0",
-    "progressbar.js": "^1.1.0"
+    "@webai-ext/core": "workspace:^",
+    "localforage": "^1.10.0"
   }
 }

@@ -1,7 +1,5 @@
 import { Model, ExtensionMessagerClient, MessagerRequest, MessagerResponse } from "@webai-ext/core";
 
-console.log('ssssss')
-
 export class WebAIClient {
     messager: ExtensionMessagerClient
 

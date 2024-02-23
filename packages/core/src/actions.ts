@@ -1,13 +1,17 @@
-export type AIActions = (
-    {
-        action: 'prompt'
-        data: {
-            model: string
-            prompt: string
-        }
+import type { MessagerRequest } from "./ExtensionMessager";
+
+interface GetModelsAction extends MessagerRequest {
+    action: 'getModels'
+}
+
+interface PromptAction extends MessagerRequest {
+    action: 'prompt'
+    data: {
+        model: string
+        prompt: string
     }
-    |
-    {
-        action: 'getModels'
-    }
-)
+}
+
+type AIActions = PromptAction | GetModelsAction
+export type AIAction<T> = AIActions & { action: T }
+export type AIActionData<T> = AIAction<T>['data']
