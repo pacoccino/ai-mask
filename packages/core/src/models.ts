@@ -4,3 +4,5 @@ export type Model = {
     loaded?: boolean
     progress?: number
 }
+
+export const b = "b"

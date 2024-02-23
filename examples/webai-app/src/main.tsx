@@ -1,9 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
+import './index.css'
+import App from './App'
+import { WebAIProvider } from './context'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <WebAIProvider>
+      <App />
+    </WebAIProvider>
   </React.StrictMode>,
 )

@@ -13,9 +13,9 @@
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; default-src 'self' data:; connect-src 'self' data: http://localhost:3000 http://localhost:3001 ws://localhost:3001 https://huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://raw.githubusercontent.com"
   },
   "action": {
-    "default_title": "Click to open panel",
-    "default_popup": "src/side_panel/page.html"
+    "default_title": "Click to open panel"
   },
+  "options_page": "src/side_panel/page.html",
   "side_panel": {
     "default_path": "src/side_panel/page.html"
   },

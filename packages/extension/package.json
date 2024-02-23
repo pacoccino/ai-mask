@@ -2,7 +2,6 @@
   "name": "web-ai-extension",
   "version": "0.1.0",
   "description": "",
-  "source": "src/manifest.json",
   "scripts": {
     "dev": "vite --port 3001",
     "build": "tsc && vite build",
@@ -11,18 +10,26 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@crxjs/vite-plugin": "^1.0.14",
     "@types/chrome": "^0.0.242",
+    "@types/react": "^18.2.56",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@webai-ext/sdk": "workspace:^",
+    "autoprefixer": "^10.4.17",
     "buffer": "^6.0.3",
+    "postcss": "^8.4.35",
     "process": "^0.11.10",
     "rimraf": "^5.0.5",
-    "@crxjs/vite-plugin": "^1.0.14",
-    "@webai-ext/sdk": "workspace:^",
+    "tailwindcss": "^3.4.1",
     "typescript": "^4.5.4",
-    "vite": "^2.9.15"
+    "vite": "^5.1.4"
   },
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.19",
     "@webai-ext/core": "workspace:^",
-    "localforage": "^1.10.0"
+    "localforage": "^1.10.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }

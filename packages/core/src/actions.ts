@@ -15,3 +15,5 @@ interface PromptAction extends MessagerRequest {
 type AIActions = PromptAction | GetModelsAction
 export type AIAction<T> = AIActions & { action: T }
 export type AIActionData<T> = AIAction<T>['data']
+
+export const a = 'a'
