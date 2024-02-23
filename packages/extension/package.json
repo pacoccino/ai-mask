@@ -1,10 +1,12 @@
 {
-  "name": "web-ai-app",
+  "name": "web-ai-extension",
   "version": "0.1.0",
   "description": "",
+  "source": "src/manifest.json",
   "scripts": {
-    "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension",
-    "build": "parcel build src/manifest.json --config @parcel/config-webextension"
+    "dev": "parcel watch --host localhost",
+    "build": "parcel build",
+    "clean": "rimraf dist .parcel-cache"
   },
   "author": "",
   "license": "ISC",
@@ -14,9 +16,11 @@
     "buffer": "^6.0.3",
     "parcel": "^2.11.0",
     "process": "^0.11.10",
+    "rimraf": "^5.0.5",
     "url": "^0.11.1"
   },
   "dependencies": {
+    "@webai-ext/core": "workspace:^",
     "@mlc-ai/web-llm": "^0.2.19",
     "localforage": "^1.10.0",
     "progressbar.js": "^1.1.0"

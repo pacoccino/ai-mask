@@ -1,9 +1,9 @@
-import { WebAIService } from "./WebAIService";
+import { WebAIService } from "@/lib/WebAIService";
 
 console.log('hello from background')
 
 chrome.sidePanel
     .setPanelBehavior({ openPanelOnActionClick: true })
-    .catch((error) => console.error(error));
+    .catch(console.error);
 
 new WebAIService()

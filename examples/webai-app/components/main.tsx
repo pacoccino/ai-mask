@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import { WebAIClient } from '../../../packages/sdk/src/WebAIClient'
+import { WebAIClient } from '@webai-ext/sdk'
 
 export default function Main() {
     const [models, setModels] = useState<any[]>([])
@@ -19,6 +19,7 @@ export default function Main() {
 
         setResponse('generating...')
         const response = await webAIClient.current.generate(prompt, model);
+        setResponse(response);
     }
 
     return (

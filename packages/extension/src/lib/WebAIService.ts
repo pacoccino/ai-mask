@@ -1,36 +1,7 @@
 import { ChatModule, InitProgressReport } from "@mlc-ai/web-llm";
 
-import { INITIAL_MODELS, getModel, getModels, setModel, setModels } from "../lib/models";
-import { WebMessage, WebMessageRequest, WebMessageRequestHandler, WebMessageResponse } from "../../../sdk/src//types";
-
-class ExtensionMessager {
-    handler: WebMessageRequestHandler
-
-    constructor() {
-        chrome.runtime.onConnectExternal.addListener(
-            port => this.onConnect(port)
-        );
-    }
-
-    private onConnect(port: Port) {
-        if (!this.handler) {
-            console.error('ExtensionMessager: connection from web but no handler')
-            return
-        }
-        port.onMessage.addListener(async (message: WebMessage) => {
-            const { messageId, data } = message
-            const response = await this.handler(data as WebMessageRequest)
-            port.postMessage({
-                messageId,
-                data: response,
-            })
-        })
-    }
-
-    setHandler(handler: WebMessageRequestHandler) {
-        this.handler = handler
-    }
-}
+import { Model, ExtensionMessager, MessagerRequest, MessagerResponse } from "@webai-ext/core";
+import { INITIAL_MODELS, getModel, getModels, setModel, setModels } from "../lib/database";
 
 export class WebAIService {
     chatModule = new ChatModule()
@@ -90,9 +61,9 @@ export class WebAIService {
         this.loadedModel = modelId
     }
 
-    async onPrompt(request: WebMessageRequest & { action: 'prompt' }): Promise<WebMessageResponse> {
+    async onPrompt(request: MessagerRequest & { action: 'prompt' }): Promise<MessagerResponse<string>> {
         if (this.generating) {
-            const messageResponse: WebMessageResponse = {
+            const messageResponse: MessagerResponse = {
                 type: 'error',
                 error: 'already generating',
             }
@@ -100,13 +71,13 @@ export class WebAIService {
         }
 
         try {
-            await this.checkModel(request.model)
+            await this.checkModel(request.data.model)
             this.generating = true
-            const response = await this.chatModule.generate(request.prompt)
+            const response = await this.chatModule.generate(request.data.prompt)
             this.generating = false
             return {
                 type: 'success',
-                response,
+                data: response,
             }
         } catch (error) {
             this.generating = false
@@ -115,31 +86,31 @@ export class WebAIService {
         }
     }
 
-    async onGetModels(request: WebMessageRequest & { action: 'getModels' }): Promise<WebMessageResponse> {
+    async onGetModels(): Promise<MessagerResponse<Model[]>> {
         const models = await getModels()
 
-        const messageResponse: WebMessageResponse = {
+        const messageResponse: MessagerResponse = {
             type: 'success',
-            response: models,
+            data: models,
         }
         return messageResponse
     }
 
-    async handleMessage(request: WebMessageRequest) {
+    async handleMessage(request: MessagerRequest): Promise<MessagerResponse> {
         try {
             switch (request.action) {
                 case 'prompt':
-                    return this.onPrompt(request)
+                    return this.onPrompt(request.data)
                 case 'getModels':
-                    return this.onGetModels(request)
+                    return this.onGetModels()
                 default:
                     throw new Error(`unsupported action ${request.action}`)
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error)
             return {
                 type: 'error',
-                error: error.message,
+                error: error?.message,
             }
         }
     }
