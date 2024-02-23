@@ -10,4 +10,20 @@
     h2 {
         @apply text-xl font-semibold mb-4;
     }
+
+    button {
+        @apply p-2 border rounded-lg hover:bg-slate-200;
+    }
+
+    th {
+        @apply bg-slate-100;
+    }
+
+    th,
+    td {
+        @apply p-2 border border-slate-300;
+    }
+
+
+
 }

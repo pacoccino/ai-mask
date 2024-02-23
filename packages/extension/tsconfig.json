@@ -23,9 +23,6 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": [
-        "./*"
-      ],
       "@webai-ext/core/*": [
         "../../../packages/core/src/*",
       ],

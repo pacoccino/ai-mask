@@ -12,8 +12,13 @@ export default function Prompt() {
         const model = selectedModel.id
 
         setResponse('generating...')
-        const response = await webAIClient.generate(prompt, model);
-        setResponse(response);
+        try {
+            const response = await webAIClient.generate(prompt, model);
+            setResponse(response);
+        } catch (error: any) {
+            console.log(error)
+            setResponse(`generation error: ${error?.message}`);
+        }
     }, [webAIClient, prompt])
 
     if (!webAIClient) {

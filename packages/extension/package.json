@@ -28,6 +28,7 @@
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.19",
     "@webai-ext/core": "workspace:^",
+    "clsx": "^2.1.0",
     "localforage": "^1.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

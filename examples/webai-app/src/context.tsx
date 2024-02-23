@@ -29,8 +29,8 @@ export function WebAIProvider({ children }: { children: React.ReactNode }) {
             webAIClient.current = new WebAIClient()
             webAIClient.current.init()
             setClientState('loaded')
-        } catch (e) {
-            console.error('failed to connect')
+        } catch (e: any) {
+            console.error('failed to connect', e)
             webAIClient.current = null
             setClientState('error')
         }

@@ -1,28 +1,24 @@
 import { ChatModule, InitProgressReport } from "@mlc-ai/web-llm";
 
 import { Model, ExtensionMessager, MessagerRequest, MessagerResponse, AIAction } from "@webai-ext/core";
-import { INITIAL_MODELS, getModel, getModels, setModel, setModels } from "./database";
+import { Database } from "./database";
+import { ExtensionMessage, listenExtensionMessage } from "./messager";
 
 export class WebAIService {
     chatModule = new ChatModule()
-    loadedModel: string | undefined
+    loadedModel: Model | null = null
     generating: boolean = false
     messager: ExtensionMessager
+    db: Database = new Database()
 
     //unloadTimeout: number | undefined
     //static unloadTimeoutTime = 10
 
     constructor() {
         this.messager = new ExtensionMessager()
-        this.messager.setHandler(this.handleMessage.bind(this))
-        this.init().catch(console.error)
-    }
-
-    async init() {
-        let models = await getModels()
-        if (!models) {
-            await setModels(INITIAL_MODELS)
-        }
+        this.messager.setHandler(this.handleAppMessage.bind(this))
+        listenExtensionMessage(this.handleExtensionMessage.bind(this))
+        this.db.init()
     }
 
     /*
@@ -39,13 +35,19 @@ export class WebAIService {
     */
 
     async checkModel(modelId: string) {
-        if (this.loadedModel === modelId) {
+        const model = await this.db.getModel(modelId)
+        if (!model) {
+            throw new Error('model not found')
+        }
+
+        if (this.loadedModel === model) {
             // refreshUnload();
             return
         }
+        await this.unloadModel()
 
         this.chatModule.setInitProgressCallback(async (report: InitProgressReport) => {
-            let model = await getModel(modelId)
+            let model = await this.db.getModel(modelId)
             if (!model) throw new Error('model not found')
             console.log("init-progress:", report);
             model.progress = report.progress
@@ -53,14 +55,26 @@ export class WebAIService {
                 model.cached = true
                 model.loaded = true
             }
-            setModel(modelId, model)
+            await this.db.setModel(modelId, model)
         });
 
         await this.chatModule.reload(modelId)
         // refreshUnload();
-        this.loadedModel = modelId
+        this.loadedModel = model
     }
 
+    async unloadModel() {
+        if (!this.loadedModel) {
+            return
+        }
+        const model = await this.db.getModel(this.loadedModel.id)
+        if (!model) {
+            return
+        }
+        model.loaded = false
+        await this.db.setModel(model.id, model)
+
+    }
     async onPrompt(request: AIAction<'prompt'>): Promise<MessagerResponse<string>> {
         if (this.generating) {
             const messageResponse: MessagerResponse = {
@@ -81,13 +95,12 @@ export class WebAIService {
             }
         } catch (error) {
             this.generating = false
-            console.error(error)
             throw error
         }
     }
 
     async onGetModels(): Promise<MessagerResponse<Model[]>> {
-        const models = await getModels()
+        const models = await this.db.getModels()
 
         const messageResponse: MessagerResponse = {
             type: 'success',
@@ -96,13 +109,35 @@ export class WebAIService {
         return messageResponse
     }
 
-    async handleMessage(request: MessagerRequest): Promise<MessagerResponse> {
+    async clearModelsCache() {
+        await caches.keys().then(cacheKeys => {
+            cacheKeys.forEach(cacheKey => {
+                caches.delete(cacheKey)
+            })
+        })
+        await this.db.init(true)
+    }
+
+    async handleExtensionMessage(message: ExtensionMessage) {
+        switch (message.type) {
+            case 'get_models':
+                return await this.db.getModels()
+            case 'clear_models_cache':
+                return await this.clearModelsCache()
+            case 'unload_model':
+                return await this.unloadModel()
+            default:
+                throw new Error('unsupported message type')
+        }
+    }
+
+    async handleAppMessage(request: MessagerRequest): Promise<MessagerResponse> {
         try {
             switch (request.action) {
                 case 'prompt':
-                    return this.onPrompt(request as AIAction<'prompt'>)
+                    return await this.onPrompt(request as AIAction<'prompt'>)
                 case 'getModels':
-                    return this.onGetModels()
+                    return await this.onGetModels()
                 default:
                     throw new Error(`unsupported action ${request.action}`)
             }
