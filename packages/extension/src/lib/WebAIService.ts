@@ -1,8 +1,8 @@
 import { ChatModule, InitProgressReport } from "@mlc-ai/web-llm";
 
-import { Model, ExtensionMessager, AIAction, MessagerStreamHandler, MessageRequest, AIActions } from "@webai-ext/core";
+import { ExtensionMessager, AIAction, MessagerStreamHandler, AIActions } from "@webai-ext/core";
 import { Database } from "./database";
-import { ExtensionMessage, listenExtensionMessage } from "./messager";
+import { InternalMessage, InternalMessager } from "./InternalMessager";
 import { GenerateProgressCallback } from "@mlc-ai/web-llm/lib/types";
 
 export class WebAIService {
@@ -17,7 +17,7 @@ export class WebAIService {
 
     constructor() {
         this.messager = new ExtensionMessager(this.handleAppMessage.bind(this))
-        listenExtensionMessage(this.handleExtensionMessage.bind(this))
+        InternalMessager.listen(this.handleInternalMessage.bind(this))
         this.db.init()
     }
 
@@ -105,7 +105,7 @@ export class WebAIService {
         await this.db.init(true)
     }
 
-    async handleExtensionMessage(message: ExtensionMessage) {
+    async handleInternalMessage(message: InternalMessage) {
         switch (message.type) {
             case 'get_models':
                 return await this.db.getModels()

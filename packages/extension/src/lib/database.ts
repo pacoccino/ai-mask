@@ -1,6 +1,6 @@
 import localforage from "localforage";
 import { Model } from "@webai-ext/core";
-import { sendExtensionMessage } from "./messager";
+import { InternalMessager } from "./InternalMessager";
 
 export const INITIAL_MODELS: Model[] = [
     {
@@ -42,7 +42,7 @@ export class Database {
         models[modelIndex] = model
         await this.lf.setItem('models', models);
 
-        await sendExtensionMessage({
+        await InternalMessager.send({
             type: 'models_updated',
         })
     }
@@ -50,7 +50,7 @@ export class Database {
     async setModels(models: Model[]) {
         await this.lf.setItem('models', models);
 
-        await sendExtensionMessage({
+        await InternalMessager.send({
             type: 'models_updated',
         })
     }

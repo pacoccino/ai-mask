@@ -12,7 +12,7 @@
     }
 
     button {
-        @apply p-2 border rounded-lg hover:bg-slate-200;
+        @apply p-2 border rounded-lg hover:bg-slate-200 disabled:bg-white;
     }
 
     th {

@@ -1,37 +1,37 @@
 import { useCallback, useEffect, useState } from "react";
 import { clsx } from "clsx";
 import { Model } from "@webai-ext/core";
-import { ExtensionMessage, listenExtensionMessage, removeExtensionMessageListener, sendExtensionMessage } from "../lib/messager";
+import { InternalMessage, InternalMessager } from "../lib/InternalMessager";
 
 export default function App() {
     const [models, setModels] = useState<Model[]>([])
     useEffect(() => {
         const updateModels = () => {
-            sendExtensionMessage({
+            InternalMessager.send({
                 type: 'get_models'
             }).then(setModels)
         }
-        const handler = async (message: ExtensionMessage) => {
+        const handler = async (message: InternalMessage) => {
             if (message.type === 'models_updated')
                 updateModels()
         }
-        listenExtensionMessage(handler)
+        InternalMessager.listen(handler)
 
         updateModels()
 
         return () => {
-            removeExtensionMessageListener(handler)
+            InternalMessager.removeListener(handler)
         }
     }, [])
 
     const clearModels = useCallback(() => {
-        sendExtensionMessage({
+        InternalMessager.send({
             type: 'clear_models_cache'
         })
     }, [])
 
     const unloadModel = useCallback(() => {
-        sendExtensionMessage({
+        InternalMessager.send({
             type: 'unload_model'
         })
     }, [])
@@ -69,8 +69,16 @@ export default function App() {
                 </tbody>
             </table>
             <div className="flex space-x-2 py-4">
-                <button onClick={clearModels} className="bg-red-300">Clear Models Cache</button>
-                <button onClick={unloadModel} className="bg-yellow-300">Unload Model</button>
+                <button
+                    onClick={clearModels}
+                    className="bg-red-300"
+                    disabled={!models.some(model => model.cached)}
+                >Clear Models Cache</button>
+                <button
+                    onClick={unloadModel}
+                    className="bg-yellow-300"
+                    disabled={!models.some(model => model.loaded)}
+                >Unload Model</button>
             </div>
         </div>
     )
