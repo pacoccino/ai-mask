@@ -1,12 +1,13 @@
 import { ChatModule, InitProgressReport } from "@mlc-ai/web-llm";
 
-import { Model, ExtensionMessager, MessagerRequest, MessagerResponse, AIAction } from "@webai-ext/core";
+import { Model, ExtensionMessager, AIAction, MessagerStreamHandler, MessageRequest, AIActions } from "@webai-ext/core";
 import { Database } from "./database";
 import { ExtensionMessage, listenExtensionMessage } from "./messager";
+import { GenerateProgressCallback } from "@mlc-ai/web-llm/lib/types";
 
 export class WebAIService {
     chatModule = new ChatModule()
-    loadedModel: Model | null = null
+    loadedModelId: string | null = null
     generating: boolean = false
     messager: ExtensionMessager
     db: Database = new Database()
@@ -15,8 +16,7 @@ export class WebAIService {
     //static unloadTimeoutTime = 10
 
     constructor() {
-        this.messager = new ExtensionMessager()
-        this.messager.setHandler(this.handleAppMessage.bind(this))
+        this.messager = new ExtensionMessager(this.handleAppMessage.bind(this))
         listenExtensionMessage(this.handleExtensionMessage.bind(this))
         this.db.init()
     }
@@ -40,7 +40,7 @@ export class WebAIService {
             throw new Error('model not found')
         }
 
-        if (this.loadedModel === model) {
+        if (this.loadedModelId === modelId) {
             // refreshUnload();
             return
         }
@@ -60,53 +60,40 @@ export class WebAIService {
 
         await this.chatModule.reload(modelId)
         // refreshUnload();
-        this.loadedModel = model
+        this.loadedModelId = modelId
     }
 
     async unloadModel() {
-        if (!this.loadedModel) {
+        if (!this.loadedModelId) {
             return
         }
-        const model = await this.db.getModel(this.loadedModel.id)
+        const model = await this.db.getModel(this.loadedModelId)
         if (!model) {
             return
         }
         model.loaded = false
         await this.db.setModel(model.id, model)
+        this.loadedModelId = null
 
     }
-    async onPrompt(request: AIAction<'prompt'>): Promise<MessagerResponse<string>> {
+    async onPrompt(request: AIAction<'prompt'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
         if (this.generating) {
-            const messageResponse: MessagerResponse = {
-                type: 'error',
-                error: 'already generating',
-            }
-            return messageResponse
+            throw new Error('already generating')
         }
+        this.generating = true
 
         try {
             await this.checkModel(request.data.model)
-            this.generating = true
-            const response = await this.chatModule.generate(request.data.prompt)
-            this.generating = false
-            return {
-                type: 'success',
-                data: response,
+            const progressHandler: GenerateProgressCallback = (step: number, currentMessage: string) => {
+                streamhandler(currentMessage)
             }
+            const response = await this.chatModule.generate(request.data.prompt, progressHandler)
+            this.generating = false
+            return response
         } catch (error) {
             this.generating = false
             throw error
         }
-    }
-
-    async onGetModels(): Promise<MessagerResponse<Model[]>> {
-        const models = await this.db.getModels()
-
-        const messageResponse: MessagerResponse = {
-            type: 'success',
-            data: models,
-        }
-        return messageResponse
     }
 
     async clearModelsCache() {
@@ -131,22 +118,14 @@ export class WebAIService {
         }
     }
 
-    async handleAppMessage(request: MessagerRequest): Promise<MessagerResponse> {
-        try {
-            switch (request.action) {
-                case 'prompt':
-                    return await this.onPrompt(request as AIAction<'prompt'>)
-                case 'getModels':
-                    return await this.onGetModels()
-                default:
-                    throw new Error(`unsupported action ${request.action}`)
-            }
-        } catch (error: any) {
-            console.error(error)
-            return {
-                type: 'error',
-                error: error?.message,
-            }
+    async handleAppMessage(request: AIActions, streamhandler: MessagerStreamHandler): Promise<any> {
+        switch (request.action) {
+            case 'prompt':
+                return this.onPrompt(request, streamhandler)
+            case 'get_models':
+                return this.db.getModels()
+            default:
+                throw new Error(`unexpected request`)
         }
     }
 }

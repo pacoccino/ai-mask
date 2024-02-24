@@ -1,48 +1,38 @@
-import { Model, ExtensionMessagerClient, MessagerRequest, MessagerResponse } from "@webai-ext/core";
+import { Model, ExtensionMessagerClient, MessagerStreamHandler, AIAction, AIActionData, AIActions } from "@webai-ext/core";
 
 export class WebAIClient {
-    messager: ExtensionMessagerClient | undefined
+    messager: ExtensionMessagerClient
 
     constructor() {
+        this.messager = new ExtensionMessagerClient({ name: 'webai-app' })
     }
 
     init() {
         try {
-            this.messager = new ExtensionMessagerClient({ name: 'webai-app' })
         } catch (e) {
             throw new Error('failed to connect')
         }
     }
 
-    private async request(request: MessagerRequest): Promise<any> {
-        return new Promise((resolve, reject) => {
-            if (!this.messager) return reject(new Error('not initialized'))
-
-            this.messager.send(request,
-                (response: MessagerResponse) => {
-                    if (response.type === 'error') {
-                        reject(new Error(response.error))
-                        return
-                    }
-                    resolve(response.data)
-                })
-        })
+    async request(request: AIActions, streamHandler?: MessagerStreamHandler): Promise<any> {
+        return this.messager.send(request, streamHandler)
     }
 
-
-    async generate(prompt: string, model: string): Promise<string> {
+    async generate({ prompt, model, streamCallback }:
+        { prompt: string, model: string, streamCallback?: MessagerStreamHandler }
+    ): Promise<string> {
         return this.request({
             action: 'prompt',
             data: {
                 model,
                 prompt,
             }
-        })
+        }, streamCallback)
     }
 
     async getModels(): Promise<Model[]> {
         return this.request({
-            action: 'getModels',
+            action: 'get_models',
         })
     }
 }

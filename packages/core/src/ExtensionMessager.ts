@@ -5,39 +5,30 @@ type WebMessageBase = {
     messageId: string
 }
 
-type WebMessageRequest = WebMessageBase & {
+type WebMessageRequest<ACTION = string, REQ_DATA = undefined> = WebMessageBase & {
     type: 'request'
     request: {
-        action: string
-        data?: any
+        action: ACTION
+        data?: REQ_DATA
     }
 }
 
-type WebMessageResponse<T = any> = WebMessageBase & {
-    type: 'response'
-    response: (
-        {
-            type: 'error'
-            error?: string
-        } | {
-            type: 'success'
-            data?: T
-        }
-    )
+type WebMessageResponse<RES_DATA = undefined> = WebMessageBase & {
+    type: 'success' | 'error' | 'stream'
+    data: RES_DATA
 }
 
-type WebMessage = WebMessageRequest | WebMessageResponse
+export type MessageRequest<ACTION = string, DATA = undefined> = WebMessageRequest<ACTION, DATA>['request']
 
-export type MessagerRequest = WebMessageRequest['request']
-export type MessagerResponse<T = any> = WebMessageResponse<T>['response']
-
-type MessagerResponseHandler = (_: MessagerResponse) => void
-type MessagerRequestHandler = (_: MessagerRequest) => Promise<MessagerResponse>
+export type MessagerRequestHandler<ACTION = string, REQ_DATA = undefined, RES_DATA = undefined> = (request: MessageRequest<ACTION, REQ_DATA>, streamHandler: MessagerStreamHandler<RES_DATA>) => Promise<RES_DATA>
+export type MessagerResponseHandler<RES_DATA = any> = (data: RES_DATA) => void
+export type MessagerStreamHandler<RES_DATA = any> = (data: RES_DATA) => void
 
 export class ExtensionMessager {
     handler: MessagerRequestHandler | undefined
 
-    constructor() {
+    constructor(handler: MessagerRequestHandler) {
+        this.handler = handler
         chrome.runtime.onConnectExternal.addListener(
             port => this.onConnect(port)
         );
@@ -54,17 +45,29 @@ export class ExtensionMessager {
                 return
             }
             const { messageId, request } = message
-            const response = await this.handler(request)
-            port.postMessage({
-                messageId,
-                type: 'response',
-                response: response,
-            } satisfies WebMessageResponse)
+            const streamHandler = (data: any) => {
+                port.postMessage({
+                    messageId,
+                    type: 'stream',
+                    data,
+                } satisfies WebMessageResponse)
+            }
+            try {
+                const response = await this.handler(request, streamHandler)
+                port.postMessage({
+                    messageId,
+                    type: 'success',
+                    data: response,
+                } satisfies WebMessageResponse)
+            } catch (error: any) {
+                console.error(error)
+                port.postMessage({
+                    messageId,
+                    type: 'error',
+                    data: error?.message,
+                } satisfies WebMessageResponse)
+            }
         })
-    }
-
-    setHandler(handler: MessagerRequestHandler) {
-        this.handler = handler
     }
 }
 
@@ -85,29 +88,38 @@ export class ExtensionMessagerClient {
 
     private listen() {
         this.port.onMessage.addListener((message: WebMessageResponse) => {
-            if (message.type !== 'response') {
-                console.error('Unexpected message in client', message)
-                return
-            }
-            const { messageId, response } = message
+            const { messageId } = message
             const handler = this.handlers[messageId]
             if (!handler) {
                 console.error('ExtensionMessager: no handler for message', message)
                 return
             }
-            handler(response)
+            handler(message)
         })
     }
 
-    send(request: MessagerRequest, callback: MessagerResponseHandler) {
-        const now = Date.now()
-        const rand = Math.random().toString(36).substring(7)
-        const messageId = `${now}-${rand}`
-        this.handlers[messageId] = callback
-        this.port.postMessage({
-            messageId,
-            type: 'request',
-            request,
-        } satisfies WebMessageRequest)
+    send(request: MessageRequest, streamCallback?: MessagerStreamHandler): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const now = Date.now()
+            const rand = Math.random().toString(36).substring(7)
+            const messageId = `${now}-${rand}`
+            const callback = (response: WebMessageResponse) => {
+                if (response.type === 'error') {
+                    reject(new Error(response.data))
+                    return
+                } else if (streamCallback && response.type === 'stream') {
+                    streamCallback(response.data)
+                } else if (response.type === 'success') {
+                    delete this.handlers[messageId]
+                    resolve(response.data)
+                }
+            }
+            this.handlers[messageId] = callback
+            this.port.postMessage({
+                messageId,
+                type: 'request',
+                request,
+            } satisfies WebMessageRequest)
+        })
     }
 }

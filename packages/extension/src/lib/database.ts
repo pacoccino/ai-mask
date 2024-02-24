@@ -27,12 +27,13 @@ export class Database {
         });
     }
 
-    async init(force = false) {
-        if (!force) {
-            const models = await this.lf.getItem('models');
-            if (models) return
+    async init(reset = false) {
+        if (reset) {
+            await this.setModels(INITIAL_MODELS);
         }
-        await this.setModels(INITIAL_MODELS);
+        let models = await this.getModels()
+        models.forEach(model => model.loaded = false)
+        await this.setModels(models)
     }
 
     async setModel(modelId: string, model: Model) {
@@ -41,7 +42,7 @@ export class Database {
         models[modelIndex] = model
         await this.lf.setItem('models', models);
 
-        sendExtensionMessage({
+        await sendExtensionMessage({
             type: 'models_updated',
         })
     }
@@ -49,14 +50,19 @@ export class Database {
     async setModels(models: Model[]) {
         await this.lf.setItem('models', models);
 
-        sendExtensionMessage({
+        await sendExtensionMessage({
             type: 'models_updated',
         })
     }
 
     async getModels(): Promise<Model[]> {
-        const value = await this.lf.getItem('models');
-        return value as Model[]
+        const models = await this.lf.getItem('models') as Model[]
+
+        if (!models) {
+            await this.setModels(INITIAL_MODELS);
+        }
+
+        return models || INITIAL_MODELS
     }
     async getModel(modelId: string): Promise<Model | undefined> {
         const models = await this.getModels()

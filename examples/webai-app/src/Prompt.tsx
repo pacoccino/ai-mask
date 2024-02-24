@@ -13,7 +13,12 @@ export default function Prompt() {
 
         setResponse('generating...')
         try {
-            const response = await webAIClient.generate(prompt, model);
+            const streamCallback = (response: string) => {
+                setResponse(`${response}...`);
+            }
+            const response = await webAIClient.generate({
+                prompt, model, streamCallback
+            });
             setResponse(response);
         } catch (error: any) {
             console.log(error)

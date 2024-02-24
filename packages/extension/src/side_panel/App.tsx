@@ -51,11 +51,19 @@ export default function App() {
                 </thead>
                 <tbody>
                     {models.map(model => (
-                        <tr key={model.id} className={clsx(model.loaded ? 'bg-blue-200' : model.cached && 'bg-green-200')}>
+                        <tr key={model.id} className={clsx(model.loaded ? 'bg-blue-200' : model.cached && 'bg-green-200', "relative")}>
                             <td>{model.id}</td>
                             <td>{model.cached ? 'yes' : 'no'}</td>
                             <td>{model.loaded ? 'yes' : 'no'}</td>
-                            <td>{Math.round((model.progress || 0) * 100)}%</td>
+                            <td className="p-0">
+                                <div className="w-full h-4 bg-white mb-2 border border-bg-green-400">
+                                    <div className="bg-green-500 h-full" style={{ width: `${Math.round((model.progress || 0) * 100)}%` }}>
+                                    </div>
+                                </div>
+                                <p className="text-center">
+                                    {Math.round((model.progress || 0) * 100)}%
+                                </p>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

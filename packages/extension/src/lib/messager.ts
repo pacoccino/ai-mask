@@ -3,16 +3,9 @@ export type ExtensionMessage = {
     data: any
 }
 
-export function sendExtensionMessage(message: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage(message, (response) => {
-            if (chrome.runtime.lastError) {
-                reject(chrome.runtime.lastError)
-            } else {
-                resolve(response)
-            }
-        })
-    })
+export async function sendExtensionMessage(message: any): Promise<any> {
+    const response = await chrome.runtime.sendMessage(message)
+    return response
 }
 
 export function listenExtensionMessage(callback: (message: ExtensionMessage) => Promise<any>) {
@@ -21,6 +14,6 @@ export function listenExtensionMessage(callback: (message: ExtensionMessage) => 
         return true
     })
 }
-export function removeExtensionMessageListener(callback: (message: ExtensionMessage) => Promise<any>) {
+export function removeExtensionMessageListener(callback: (message: ExtensionMessage) => Promise<any>): void {
     chrome.runtime.onMessage.removeListener(callback)
 }

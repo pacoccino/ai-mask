@@ -15,7 +15,6 @@
   "action": {
     "default_title": "Click to open panel"
   },
-  "options_page": "src/side_panel/page.html",
   "side_panel": {
     "default_path": "src/side_panel/page.html"
   },
@@ -25,8 +24,6 @@
   },
   "permissions": [
     "storage",
-    "tabs",
-    "webNavigation",
     "sidePanel"
   ],
   "externally_connectable": {
