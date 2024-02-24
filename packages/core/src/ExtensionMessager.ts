@@ -1,3 +1,4 @@
+import { AIActions } from "actions";
 
 const EXTENSION_ID = "npgbhebmpolpcblmonkddamngjcmppnd";
 
@@ -5,11 +6,11 @@ type WebMessageBase = {
     messageId: string
 }
 
-type WebMessageRequest<ACTION = string, REQ_DATA = undefined> = WebMessageBase & {
+type WebMessageRequest<ACTION = string, REQ_PARAMS = {}> = WebMessageBase & {
     type: 'request'
     request: {
         action: ACTION
-        data?: REQ_DATA
+        params: REQ_PARAMS
     }
 }
 
@@ -18,16 +19,16 @@ type WebMessageResponse<RES_DATA = undefined> = WebMessageBase & {
     data: RES_DATA
 }
 
-export type MessageRequest<ACTION = string, DATA = undefined> = WebMessageRequest<ACTION, DATA>['request']
+export type MessageRequest<ACTION = string, REQ_PARAMS = {}> = WebMessageRequest<ACTION, REQ_PARAMS>['request']
 
-export type MessagerRequestHandler<ACTION = string, REQ_DATA = undefined, RES_DATA = undefined> = (request: MessageRequest<ACTION, REQ_DATA>, streamHandler: MessagerStreamHandler<RES_DATA>) => Promise<RES_DATA>
+export type MessagerRequestHandler<ACTION = string, REQ_PARAMS = {}, RES_DATA = undefined> = (request: MessageRequest<ACTION, REQ_PARAMS>, streamHandler: MessagerStreamHandler<RES_DATA>) => Promise<RES_DATA>
 export type MessagerResponseHandler<RES_DATA = any> = (data: RES_DATA) => void
 export type MessagerStreamHandler<RES_DATA = any> = (data: RES_DATA) => void
 
-export class ExtensionMessager {
+export class ExtensionMessager<T extends MessageRequest> {
     handler: MessagerRequestHandler | undefined
 
-    constructor(handler: MessagerRequestHandler) {
+    constructor(handler: MessagerRequestHandler<T['action'], T['params']>) {
         this.handler = handler
         chrome.runtime.onConnectExternal.addListener(
             port => this.onConnect(port)
@@ -71,7 +72,7 @@ export class ExtensionMessager {
     }
 }
 
-export class ExtensionMessagerClient {
+export class ExtensionMessagerClient<T extends MessageRequest> {
     handlers: { [key: string]: MessagerResponseHandler }
     port: chrome.runtime.Port
 
@@ -98,7 +99,7 @@ export class ExtensionMessagerClient {
         })
     }
 
-    send(request: MessageRequest, streamCallback?: MessagerStreamHandler): Promise<any> {
+    send(request: MessageRequest<T['action'], T['params']>, streamCallback?: MessagerStreamHandler): Promise<any> {
         return new Promise((resolve, reject) => {
             const now = Date.now()
             const rand = Math.random().toString(36).substring(7)

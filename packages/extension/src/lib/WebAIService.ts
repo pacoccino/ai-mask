@@ -1,6 +1,6 @@
 import { ChatModule, InitProgressReport } from "@mlc-ai/web-llm";
 
-import { ExtensionMessager, AIAction, MessagerStreamHandler, AIActions } from "@webai-ext/core";
+import { ExtensionMessager, MessagerStreamHandler, AIActions, AIActionParams } from "@webai-ext/core";
 import { Database } from "./database";
 import { InternalMessage, InternalMessager } from "./InternalMessager";
 import { GenerateProgressCallback } from "@mlc-ai/web-llm/lib/types";
@@ -9,14 +9,15 @@ export class WebAIService {
     chatModule = new ChatModule()
     loadedModelId: string | null = null
     generating: boolean = false
-    messager: ExtensionMessager
+    messager: ExtensionMessager<AIActions>
     db: Database = new Database()
 
     //unloadTimeout: number | undefined
     //static unloadTimeoutTime = 10
 
     constructor() {
-        this.messager = new ExtensionMessager(this.handleAppMessage.bind(this))
+        // @ts-ignore
+        this.messager = new ExtensionMessager<AIActions>(this.handleAppMessage.bind(this))
         InternalMessager.listen(this.handleInternalMessage.bind(this))
         this.db.init()
     }
@@ -76,23 +77,32 @@ export class WebAIService {
         this.loadedModelId = null
 
     }
-    async onPrompt(request: AIAction<'prompt'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
+    async taskCompletion(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
         if (this.generating) {
             throw new Error('already generating')
         }
         this.generating = true
 
         try {
-            await this.checkModel(request.data.model)
+            await this.checkModel(params.modelId)
             const progressHandler: GenerateProgressCallback = (step: number, currentMessage: string) => {
                 streamhandler(currentMessage)
             }
-            const response = await this.chatModule.generate(request.data.prompt, progressHandler)
+            const response = await this.chatModule.generate(params.prompt, progressHandler)
             this.generating = false
             return response
         } catch (error) {
             this.generating = false
             throw error
+        }
+    }
+
+    async onInfer(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
+        switch (params.task) {
+            case 'completion':
+                return this.taskCompletion(params, streamhandler)
+            default:
+                throw new Error('unsupported task ' + params.task)
         }
     }
 
@@ -120,8 +130,8 @@ export class WebAIService {
 
     async handleAppMessage(request: AIActions, streamhandler: MessagerStreamHandler): Promise<any> {
         switch (request.action) {
-            case 'prompt':
-                return this.onPrompt(request, streamhandler)
+            case 'infer':
+                return this.onInfer(request.params, streamhandler)
             case 'get_models':
                 return this.db.getModels()
             default:

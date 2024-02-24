@@ -27,7 +27,11 @@ export default function Models() {
     <div className="flex flex-col items-center">
       <div className='mb-4'>
         <h2>Models</h2>
-        <select value={selectedModel} onChange={e => setSelectedModel(e.target.value)}>
+        <select
+          className='w-full max-w-lg'
+          value={selectedModel}
+          onChange={e => setSelectedModel(e.target.value)}
+        >
           {models.map(model => (
             <option key={model.id}>
               {model.id}

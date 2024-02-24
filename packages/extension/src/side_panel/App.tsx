@@ -39,35 +39,6 @@ export default function App() {
     return (
         <div className="flex flex-col items-center p-4">
             <h1>WebAI Extension</h1>
-            <h2>Available models</h2>
-            <table className="border-collapse border border-slate-400">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Cached</th>
-                        <th>In Memory</th>
-                        <th>Progress</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {models.map(model => (
-                        <tr key={model.id} className={clsx(model.loaded ? 'bg-blue-200' : model.cached && 'bg-green-200', "relative")}>
-                            <td>{model.id}</td>
-                            <td>{model.cached ? 'yes' : 'no'}</td>
-                            <td>{model.loaded ? 'yes' : 'no'}</td>
-                            <td className="p-0">
-                                <div className="w-full h-4 bg-white mb-2 border border-bg-green-400">
-                                    <div className="bg-green-500 h-full" style={{ width: `${Math.round((model.progress || 0) * 100)}%` }}>
-                                    </div>
-                                </div>
-                                <p className="text-center">
-                                    {Math.round((model.progress || 0) * 100)}%
-                                </p>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
             <div className="flex space-x-2 py-4">
                 <button
                     onClick={clearModels}
@@ -79,6 +50,46 @@ export default function App() {
                     className="bg-yellow-300"
                     disabled={!models.some(model => model.loaded)}
                 >Unload Model</button>
+            </div>
+            <h2 className="mb-2">Available models</h2>
+            <div className="flex flex-col w-full border border-slate-200 divide-y">
+                {models.map(model => (
+                    <div key={model.id} className="px-4 py-2">
+                        <p className="text-base text-center">{model.id}</p>
+
+                        {(model.progress && model.progress !== 1) &&
+                            <div className="relative w-full h-6 bg-white border border-bg-green-400 my-1">
+                                <div className="bg-green-500 h-full" style={{ width: `${Math.round((model.progress || 0) * 100)}%` }} />
+                                <div className="absolute top-0 left-0 right-0 text-center">Loading: {Math.round((model.progress || 0) * 100)}%</div>
+                            </div>
+                        }
+
+                        <div className="flex flex-wrap space-x-4 my-2">
+                            <div>
+                                <h3>Engine</h3>
+                                <p>{model.engine}</p>
+                            </div>
+                            <div>
+                                <h3>Task</h3>
+                                <div>{model.task}</div>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-wrap space-x-2">
+                            {model.cached &&
+                                <div className="badge bg-green-400">
+                                    Cached
+                                </div>
+                            }
+                            {model.loaded &&
+                                <div className="badge bg-blue-400">
+                                    In memory
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                ))}
             </div>
         </div>
     )

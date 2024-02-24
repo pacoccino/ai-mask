@@ -1,10 +1,10 @@
-import { Model, ExtensionMessagerClient, MessagerStreamHandler, AIAction, AIActionData, AIActions } from "@webai-ext/core";
+import { Model, ExtensionMessagerClient, MessagerStreamHandler, AIActionParams, AIActions, AIAction } from "@webai-ext/core";
 
 export class WebAIClient {
-    messager: ExtensionMessagerClient
+    messager: ExtensionMessagerClient<AIActions>
 
     constructor() {
-        this.messager = new ExtensionMessagerClient({ name: 'webai-app' })
+        this.messager = new ExtensionMessagerClient<AIActions>({ name: 'webai-app' })
     }
 
     init() {
@@ -14,25 +14,21 @@ export class WebAIClient {
         }
     }
 
-    async request(request: AIActions, streamHandler?: MessagerStreamHandler): Promise<any> {
+    async request<T>(request: AIAction<T>, streamHandler?: MessagerStreamHandler): Promise<any> {
         return this.messager.send(request, streamHandler)
     }
 
-    async generate({ prompt, model, streamCallback }:
-        { prompt: string, model: string, streamCallback?: MessagerStreamHandler }
-    ): Promise<string> {
+    async infer(params: AIActionParams<'infer'>, streamCallback?: MessagerStreamHandler): Promise<string> {
         return this.request({
-            action: 'prompt',
-            data: {
-                model,
-                prompt,
-            }
+            action: 'infer',
+            params,
         }, streamCallback)
     }
 
     async getModels(): Promise<Model[]> {
         return this.request({
             action: 'get_models',
+            params: {},
         })
     }
 }

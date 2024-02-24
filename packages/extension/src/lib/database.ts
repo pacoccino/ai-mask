@@ -5,12 +5,18 @@ import { InternalMessager } from "./InternalMessager";
 export const INITIAL_MODELS: Model[] = [
     {
         id: 'Llama-2-7b-chat-hf-q4f32_1',
+        engine: 'web-llm',
+        task: 'completion',
     },
     {
         id: 'RedPajama-INCITE-Chat-3B-v1-q4f32_1',
+        engine: 'web-llm',
+        task: 'completion',
     },
     {
-        id: 'gpt2-q0f16',
+        id: 'Xenova/nllb-200-distilled-600M',
+        task: 'translation',
+        engine: 'web-llm',
     },
 ]
 

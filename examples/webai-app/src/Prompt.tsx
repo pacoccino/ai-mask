@@ -9,16 +9,21 @@ export default function Prompt() {
 
     const generate = useCallback(async () => {
         if (!webAIClient) return
-        const model = selectedModel.id
+        const modelId = selectedModel.id
 
         setResponse('generating...')
         try {
             const streamCallback = (response: string) => {
                 setResponse(`${response}...`);
             }
-            const response = await webAIClient.generate({
-                prompt, model, streamCallback
-            });
+            const response = await webAIClient.infer(
+                {
+                    prompt,
+                    modelId,
+                    task: 'completion',
+                },
+                streamCallback
+            );
             setResponse(response);
         } catch (error: any) {
             console.log(error)
@@ -35,18 +40,18 @@ export default function Prompt() {
     }
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center w-full">
             <h2>Prompt</h2>
 
-            <div className='flex'>
+            <div className='flex flex-col w-full max-w-screen-md'>
                 <input
                     type="text"
-                    className='border rounded-md p-2 mr-2'
+                    className='border rounded-md p-2'
                     value={prompt}
                     onChange={e => setPrompt(e.target.value)}
                 />
                 <button
-                    className='border rounded-md p-2'
+                    className='border rounded-md p-2 mt-2'
                     onClick={generate}
                 >Send</button>
             </div>

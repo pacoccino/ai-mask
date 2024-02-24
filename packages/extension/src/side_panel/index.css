@@ -4,11 +4,15 @@
 
 @layer base {
     h1 {
-        @apply text-2xl font-bold mb-4;
+        @apply text-2xl font-bold;
     }
 
     h2 {
-        @apply text-xl font-semibold mb-4;
+        @apply text-xl font-semibold;
+    }
+
+    h3 {
+        @apply text-base font-semibold;
     }
 
     button {
@@ -23,7 +27,10 @@
     td {
         @apply p-2 border border-slate-300;
     }
+}
 
-
-
+@layer components {
+    .badge {
+        @apply inline-block px-2 py-1 text-xs font-semibold text-white bg-slate-500 rounded-full;
+    }
 }
