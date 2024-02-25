@@ -20,26 +20,10 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "baseUrl": "./src",
-    "paths": {
-      "@webai-ext/core/*": [
-        "../../../packages/core/src/*",
-      ],
-      "@webai-ext/core": [
-        "../../../packages/core/src/index",
-      ]
-    },
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-  ],
-  "exclude": [
-    "node_modules"
+    "src"
   ],
   "references": [
     {

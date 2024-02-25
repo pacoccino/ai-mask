@@ -5,7 +5,7 @@ export type AIActions =
     MessageRequest<'infer', {
         modelId: Model['id']
         task: Model['task']
-        prompt: string
+        inferParams: any
     }>
     | MessageRequest<'get_models'>
 

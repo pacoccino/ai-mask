@@ -1,6 +1,8 @@
 {
     "name": "webai-ext-monorepo",
     "scripts": {
+        "build": "pnpm run --recursive build",
+        "lint": "pnpm run --recursive lint",
         "dev": "pnpm run --parallel dev"
     },
     "engines": {

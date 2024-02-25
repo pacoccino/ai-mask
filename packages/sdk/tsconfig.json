@@ -10,10 +10,10 @@
         "./*"
       ],
       "@webai-ext/core/*": [
-        "../../../packages/core/src/*",
+        "../../core/src/*",
       ],
       "@webai-ext/core": [
-        "../../../packages/core/src/index",
+        "../../core/src/index",
       ]
     },
     "typeRoots": [

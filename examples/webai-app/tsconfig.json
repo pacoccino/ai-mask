@@ -20,19 +20,7 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@webai-ext/core/*": [
-        "../../../packages/core/src/*",
-      ],
-      "@webai-ext/core": [
-        "../../../packages/core/src/index",
-      ]
-    },
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src"

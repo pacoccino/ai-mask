@@ -1,14 +1,14 @@
-import { useContext, useCallback, useState } from 'react';
-import { WebAIContext } from './context';
+import { useCallback, useState } from 'react';
+import { useWebAI } from './context';
 
 export default function Prompt() {
-    const { webAIClient, selectedModel } = useContext(WebAIContext)
+    const { webAIClient, selectedModel } = useWebAI()
 
     const [prompt, setPrompt] = useState<string>('')
     const [response, setResponse] = useState<string>('')
 
     const generate = useCallback(async () => {
-        if (!webAIClient) return
+        if (!webAIClient || !selectedModel) return
         const modelId = selectedModel.id
 
         setResponse('generating...')
@@ -18,18 +18,21 @@ export default function Prompt() {
             }
             const response = await webAIClient.infer(
                 {
-                    prompt,
                     modelId,
                     task: 'completion',
+                    inferParams: {
+                        prompt,
+                    }
                 },
                 streamCallback
             );
             setResponse(response);
-        } catch (error: any) {
+        } catch (error) {
             console.log(error)
-            setResponse(`generation error: ${error?.message}`);
+            const message = (error instanceof Error) ? error.message : String(error)
+            setResponse(`generation error: ${message}`);
         }
-    }, [webAIClient, prompt])
+    }, [webAIClient, selectedModel, prompt, setResponse])
 
     if (!webAIClient) {
         return (

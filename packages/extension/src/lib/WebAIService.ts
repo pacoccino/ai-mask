@@ -1,16 +1,13 @@
-import { ChatModule, InitProgressReport } from "@mlc-ai/web-llm";
-
 import { ExtensionMessager, MessagerStreamHandler, AIActions, AIActionParams } from "@webai-ext/core";
 import { Database } from "./database";
 import { InternalMessage, InternalMessager } from "./InternalMessager";
-import { GenerateProgressCallback } from "@mlc-ai/web-llm/lib/types";
+import { ModelLoadReport, WebAIInferer } from "./WebAIInfer";
 
 export class WebAIService {
-    chatModule = new ChatModule()
-    loadedModelId: string | null = null
-    generating: boolean = false
+    infering: boolean = false
     messager: ExtensionMessager<AIActions>
     db: Database = new Database()
+    inferer: WebAIInferer | null = null
 
     //unloadTimeout: number | undefined
     //static unloadTimeoutTime = 10
@@ -19,100 +16,73 @@ export class WebAIService {
         // @ts-ignore
         this.messager = new ExtensionMessager<AIActions>(this.handleAppMessage.bind(this))
         InternalMessager.listen(this.handleInternalMessage.bind(this))
-        this.db.init()
+        this.db.init().catch(console.error)
     }
 
-    /*
-    async refreshUnload() {
-        if (unloadTimeout) clearTimeout(unloadTimeout)
-        unloadTimeout = setTimeout(() => {
-            unloadTimeout = undefined
-            if (generating) return refreshUnload()
-            cm.unload().then(() => {
-                loadedModel = undefined
-            })
-        }, unloadTimeoutTime)
-    }
-    */
+    async getInferer(params: AIActionParams<'infer'>): Promise<WebAIInferer> {
+        const progressHandler = (report: ModelLoadReport) => {
+            if (!this.inferer) return
+            this.inferer.model.progress = report.progress
+            if (report.finished) {
+                this.inferer.model.cached = true
+                this.inferer.model.loaded = true
+            }
+            this.db.setModel(this.inferer.model.id, this.inferer.model)
+        }
 
-    async checkModel(modelId: string) {
-        const model = await this.db.getModel(modelId)
+        if (this.inferer) {
+            if (this.inferer.model.id === params.modelId) {
+                if (this.inferer.isReady()) return this.inferer
+                else {
+                    await this.inferer.load(progressHandler)
+                    return this.inferer
+                }
+            } else {
+                this.inferer.unload()
+                this.inferer = null
+            }
+        }
+        const model = await this.db.getModel(params.modelId)
         if (!model) {
             throw new Error('model not found')
         }
-
-        if (this.loadedModelId === modelId) {
-            // refreshUnload();
-            return
-        }
-        await this.unloadModel()
-
-        this.chatModule.setInitProgressCallback(async (report: InitProgressReport) => {
-            let model = await this.db.getModel(modelId)
-            if (!model) throw new Error('model not found')
-            console.log("init-progress:", report);
-            model.progress = report.progress
-            if (model.progress === 1) {
-                model.cached = true
-                model.loaded = true
-            }
-            await this.db.setModel(modelId, model)
-        });
-
-        await this.chatModule.reload(modelId)
-        // refreshUnload();
-        this.loadedModelId = modelId
+        this.inferer = new WebAIInferer(model)
+        await this.inferer.load(progressHandler)
+        return this.inferer
     }
 
     async unloadModel() {
-        if (!this.loadedModelId) {
-            return
-        }
-        const model = await this.db.getModel(this.loadedModelId)
-        if (!model) {
-            return
-        }
-        model.loaded = false
-        await this.db.setModel(model.id, model)
-        this.loadedModelId = null
-
-    }
-    async taskCompletion(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
-        if (this.generating) {
-            throw new Error('already generating')
-        }
-        this.generating = true
-
-        try {
-            await this.checkModel(params.modelId)
-            const progressHandler: GenerateProgressCallback = (step: number, currentMessage: string) => {
-                streamhandler(currentMessage)
-            }
-            const response = await this.chatModule.generate(params.prompt, progressHandler)
-            this.generating = false
-            return response
-        } catch (error) {
-            this.generating = false
-            throw error
-        }
-    }
-
-    async onInfer(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
-        switch (params.task) {
-            case 'completion':
-                return this.taskCompletion(params, streamhandler)
-            default:
-                throw new Error('unsupported task ' + params.task)
+        if (this.inferer) {
+            this.inferer.unload()
+            this.inferer.model.loaded = false
+            await this.db.setModel(this.inferer.model.id, this.inferer.model)
+            this.inferer = null
         }
     }
 
     async clearModelsCache() {
+        await this.unloadModel()
         await caches.keys().then(cacheKeys => {
             cacheKeys.forEach(cacheKey => {
                 caches.delete(cacheKey)
             })
         })
         await this.db.init(true)
+    }
+
+    async onInfer(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
+        if (this.infering) throw new Error('already infering')
+
+        try {
+            this.infering = true
+            const inferer = await this.getInferer(params)
+            const response = await inferer.infer(params, streamhandler)
+            return response
+        } catch (e) {
+            throw e
+        } finally {
+            this.infering = false
+        }
     }
 
     async handleInternalMessage(message: InternalMessage) {
@@ -129,6 +99,7 @@ export class WebAIService {
     }
 
     async handleAppMessage(request: AIActions, streamhandler: MessagerStreamHandler): Promise<any> {
+        console.log('handleAppMessage', request)
         switch (request.action) {
             case 'infer':
                 return this.onInfer(request.params, streamhandler)

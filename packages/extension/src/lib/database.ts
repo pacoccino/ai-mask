@@ -15,8 +15,8 @@ export const INITIAL_MODELS: Model[] = [
     },
     {
         id: 'Xenova/nllb-200-distilled-600M',
+        engine: 'transformers.js',
         task: 'translation',
-        engine: 'web-llm',
     },
 ]
 
@@ -50,7 +50,7 @@ export class Database {
 
         await InternalMessager.send({
             type: 'models_updated',
-        })
+        }, true)
     }
 
     async setModels(models: Model[]) {
@@ -58,7 +58,7 @@ export class Database {
 
         await InternalMessager.send({
             type: 'models_updated',
-        })
+        }, true)
     }
 
     async getModels(): Promise<Model[]> {

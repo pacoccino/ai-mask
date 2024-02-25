@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { clsx } from "clsx";
 import { Model } from "@webai-ext/core";
 import { InternalMessage, InternalMessager } from "../lib/InternalMessager";
 
@@ -8,7 +7,7 @@ export default function App() {
     useEffect(() => {
         const updateModels = () => {
             InternalMessager.send({
-                type: 'get_models'
+                type: 'get_models',
             }).then(setModels)
         }
         const handler = async (message: InternalMessage) => {
@@ -57,10 +56,10 @@ export default function App() {
                     <div key={model.id} className="px-4 py-2">
                         <p className="text-base text-center">{model.id}</p>
 
-                        {(model.progress && model.progress !== 1) &&
+                        {(model.progress && model.progress !== 100) &&
                             <div className="relative w-full h-6 bg-white border border-bg-green-400 my-1">
-                                <div className="bg-green-500 h-full" style={{ width: `${Math.round((model.progress || 0) * 100)}%` }} />
-                                <div className="absolute top-0 left-0 right-0 text-center">Loading: {Math.round((model.progress || 0) * 100)}%</div>
+                                <div className="bg-green-500 h-full" style={{ width: `${model.progress || 0}%` }} />
+                                <div className="absolute top-0 left-0 right-0 text-center">Loading: {model.progress || 0}%</div>
                             </div>
                         }
 

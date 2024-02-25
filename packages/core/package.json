@@ -1,12 +1,14 @@
 {
     "name": "@webai-ext/core",
     "source": "src/index.ts",
-    "main": "dist/index.js",
+    "type": "module",
+    "main": "dist/index",
     "module": "dist/index.mjs",
-    "types": "dist/types.d.ts",
+    "types": "dist/index",
     "scripts": {
-        "dev": "tsup ./src/index.ts --watch --format esm,cjs",
-        "clean": "rimraf ./dist ./parcel-cache"
+        "dev": "pnpm run build --watch",
+        "build": "tsup ./src/index.ts --format esm,cjs --dts",
+        "clean": "rimraf ./dist"
     },
     "devDependencies": {
         "@types/chrome": "^0.0.261",

@@ -1,11 +1,12 @@
-import { useContext, useEffect, useState } from 'react';
-import { Model } from '@webai-ext/sdk'
-import { WebAIContext } from './context';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { Model } from '@webai-ext/sdk';
+import { useWebAI } from './context';
 
-export default function Models() {
-  const { webAIClient, selectedModel, setSelectedModel } = useContext(WebAIContext)
+export default function Models({ task }: { task: Model['task'] }) {
+  const { webAIClient, selectedModel, setSelectedModel } = useWebAI()
 
   const [models, setModels] = useState<Model[]>([])
+  const [taskModels, setTaskModels] = useState<Model[]>([])
 
   useEffect(() => {
     if (!webAIClient) return
@@ -13,7 +14,19 @@ export default function Models() {
       setModels(models)
       setSelectedModel(models[0])
     })
-  }, [webAIClient])
+  }, [webAIClient, setModels, setSelectedModel])
+
+  useEffect(() => {
+    const taskModels = models.filter(m => m.task === task)
+    setTaskModels(taskModels)
+    setSelectedModel(taskModels[0])
+  }, [task, models, setTaskModels])
+
+  const changeModel = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
+    const modelId = e.target.value
+    const model = models.find(m => m.id === modelId)
+    if (model) setSelectedModel(model)
+  }, [models, setSelectedModel])
 
   if (!webAIClient) {
     return (
@@ -24,21 +37,19 @@ export default function Models() {
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <div className='mb-4'>
-        <h2>Models</h2>
-        <select
-          className='w-full max-w-lg'
-          value={selectedModel}
-          onChange={e => setSelectedModel(e.target.value)}
-        >
-          {models.map(model => (
-            <option key={model.id}>
-              {model.id}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className="">
+      <h2 className='mb-2'>Model</h2>
+      <select
+        className=''
+        value={selectedModel?.id}
+        onChange={changeModel}
+      >
+        {taskModels.map(model => (
+          <option key={model.id} value={model.id}>
+            {model.id}
+          </option>
+        ))}
+      </select>
     </div>
   )
 }
