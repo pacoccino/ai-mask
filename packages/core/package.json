@@ -1,6 +1,6 @@
 {
     "name": "@ai-mask/core",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/pacoccino/ai-mask"
@@ -10,7 +10,7 @@
     "main": "dist/index",
     "types": "dist/index",
     "files": [
-        "lib"
+        "dist"
     ],
     "scripts": {
         "dev": "pnpm run build --watch",

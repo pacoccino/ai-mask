@@ -1,6 +1,6 @@
 {
     "name": "@ai-mask/sdk",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/pacoccino/ai-mask"
@@ -9,8 +9,16 @@
     "source": "src/index.ts",
     "main": "dist/index",
     "types": "dist/index",
+    "keywords": [
+        "ai",
+        "artificial intelligence",
+        "web-llm",
+        "transformers.js",
+        "chrome extension",
+        "ai"
+    ],
     "files": [
-        "lib"
+        "dist"
     ],
     "scripts": {
         "dev": "pnpm run build --watch",
