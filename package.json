@@ -8,8 +8,8 @@
     "scripts": {
         "build": "pnpm run --recursive --filter=!./forks/* build",
         "publish": "pnpm run build && pnpm run publish-core && pnpm run publish-sdk",
-        "publish-core": "pnpm publish --filter=@ai-mask/core",
-        "publish-sdk": "pnpm publish --filter=@ai-mask/sdk",
+        "publish-core": "pnpm publish --filter=@ai-mask/core --access public",
+        "publish-sdk": "pnpm publish --filter=@ai-mask/sdk --access public",
         "clean": "pnpm run --recursive clean",
         "lint": "pnpm run --recursive --filter=!./forks/* lint",
         "dev": "pnpm run --parallel --filter=!./forks/* dev"
