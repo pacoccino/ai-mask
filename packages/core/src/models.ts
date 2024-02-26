@@ -7,6 +7,12 @@ export type Model = {
 
 export const models: Model[] = [
     {
+        id: 'gemma-2b-it-q4f32_1',
+        name: 'Gemma 2B',
+        engine: 'web-llm',
+        task: 'chat',
+    },
+    {
         id: 'Llama-2-7b-chat-hf-q4f16_1',
         name: 'Llama2 7B Chat',
         engine: 'web-llm',
@@ -15,12 +21,6 @@ export const models: Model[] = [
     {
         id: 'Mistral-7B-Instruct-v0.2-q4f16_1',
         name: 'Mistral 7B Instruct',
-        engine: 'web-llm',
-        task: 'chat',
-    },
-    {
-        id: 'gemma-2b-it-q4f32_1',
-        name: 'Gemma 2B',
         engine: 'web-llm',
         task: 'chat',
     },

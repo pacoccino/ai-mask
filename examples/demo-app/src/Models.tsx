@@ -1,20 +1,11 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { Model } from '@ai-mask/sdk';
+import { Model, models } from '@ai-mask/sdk';
 import { useAIMask } from './context';
 
 export default function Models({ task }: { task: Model['task'] }) {
   const { aiMaskClient, selectedModel, setSelectedModel } = useAIMask()
 
-  const [models, setModels] = useState<Model[]>([])
   const [taskModels, setTaskModels] = useState<Model[]>([])
-
-  useEffect(() => {
-    if (!aiMaskClient) return
-    aiMaskClient.getModels().then(models => {
-      setModels(models)
-      setSelectedModel(models[0])
-    })
-  }, [aiMaskClient, setModels, setSelectedModel])
 
   useEffect(() => {
     const taskModels = models.filter(m => m.task === task)

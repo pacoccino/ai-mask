@@ -11,10 +11,15 @@ export interface ChatCompletionUserMessageParam {
     role: 'user';
 }
 
+export interface ChatCompletionAssistantMessageParam {
+    role: 'assistant';
+    content?: string | null;
+}
+
 export type ChatCompletionMessageParam =
     | ChatCompletionSystemMessageParam
     | ChatCompletionUserMessageParam
-
+    | ChatCompletionAssistantMessageParam
 
 export interface ChatCompletionParams {
     messages: Array<ChatCompletionMessageParam>
