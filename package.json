@@ -1,5 +1,6 @@
 {
     "name": "@ai-mask/monorepo",
+    "version": "0.1.0",
     "scripts": {
         "build": "pnpm run --recursive --filter=!./forks/* build",
         "clean": "pnpm run --recursive --filter=!./forks/* clean",
