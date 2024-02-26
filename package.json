@@ -1,15 +1,21 @@
 {
     "name": "@ai-mask/monorepo",
     "version": "0.1.0",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pacoccino/ai-mask"
+    },
     "scripts": {
         "build": "pnpm run --recursive --filter=!./forks/* build",
-        "clean": "pnpm run --recursive --filter=!./forks/* clean",
+        "publish": "pnpm run build && pnpm run publish-core && pnpm run publish-sdk",
+        "publish-core": "pnpm publish --filter=@ai-mask/core",
+        "publish-sdk": "pnpm publish --filter=@ai-mask/sdk",
+        "clean": "pnpm run --recursive clean",
         "lint": "pnpm run --recursive --filter=!./forks/* lint",
-        "dev": "pnpm run --parallel --filter=!./forks/* dev ",
-        "dev-p": "pnpm run --parallel --filter=!./forks/* dev"
+        "dev": "pnpm run --parallel --filter=!./forks/* dev"
     },
     "engines": {
-        "node": ">=20",
+        "node": ">=18",
         "pnpm": ">=8"
     },
     "devDependencies": {
