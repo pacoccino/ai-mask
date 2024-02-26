@@ -1,10 +1,8 @@
 import { ChatModule, InitProgressReport } from "@mlc-ai/web-llm";
+import { GenerateProgressCallback } from "@mlc-ai/web-llm/lib/types";
 import { env, pipeline, TranslationPipeline } from '@xenova/transformers';
 
-import { AIActionParams, MessagerStreamHandler, Model, ChatCompletionParams, CompletionParams, TranslationParams } from "@ai-mask/core";
-import { GenerateProgressCallback } from "@mlc-ai/web-llm/lib/types";
-
-import { config } from '@ai-mask/core'
+import { config, AIActionParams, MessagerStreamHandler, Model, ChatCompletionParams, CompletionParams, TranslationParams } from "@ai-mask/core";
 
 export interface ModelLoadReport {
     progress: number
