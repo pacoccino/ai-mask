@@ -27,9 +27,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./examples/demo-app
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,7 +39,7 @@ jobs:
           node-version: 18
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm --link-workspace-packages false install
+        run: pnpm install
       - name: Build
         run: pnpm run build
       - name: Setup Pages
