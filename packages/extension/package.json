@@ -30,7 +30,7 @@
     "vite": "^5.1.4"
   },
   "dependencies": {
-    "@ai-mask/core": "workspace:^",
+    "@ai-mask/core": "^0.1.1",
     "@xenova/transformers": "^2.15.1",
     "clsx": "^2.1.0",
     "localforage": "^1.10.0",
