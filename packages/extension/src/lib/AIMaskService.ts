@@ -1,12 +1,11 @@
-import { ExtensionMessager, MessagerStreamHandler, AIActions, AIActionParams } from "@ai-mask/core";
-import { Database } from "./Database";
+import { ExtensionMessager, MessagerStreamHandler, AIActions, AIActionParams, getModel, models } from "@ai-mask/core";
+import { database } from "./Database";
 import { InternalMessage, InternalMessager } from "./InternalMessager";
 import { ModelLoadReport, AIMaskInferer } from "./AIMaskInfer";
 
 export class AIMaskService {
     infering: boolean = false
     messager: ExtensionMessager<AIActions>
-    db: Database = new Database()
     inferer: AIMaskInferer | null = null
 
     //unloadTimeout: number | undefined
@@ -16,18 +15,21 @@ export class AIMaskService {
         // @ts-ignore
         this.messager = new ExtensionMessager<AIActions>(this.handleAppMessage.bind(this))
         InternalMessager.listen(this.handleInternalMessage.bind(this))
-        this.db.init().catch(console.error)
+        database.init().catch(console.error)
     }
 
     async getInferer(params: AIActionParams<'infer'>): Promise<AIMaskInferer> {
         const progressHandler = (report: ModelLoadReport) => {
             if (!this.inferer) return
-            this.inferer.model.progress = report.progress
-            if (report.finished) {
-                this.inferer.model.cached = true
-                this.inferer.model.loaded = true
-            }
-            this.db.setModel(this.inferer.model.id, this.inferer.model)
+            const modelId = this.inferer.model.id
+            database
+                .setProgress(modelId, report.progress)
+                .then(() => {
+                    if (!report.finished) {
+                        return database.setCached(modelId)
+                    }
+                })
+                .catch(console.error)
         }
 
         if (this.inferer) {
@@ -42,7 +44,7 @@ export class AIMaskService {
                 this.inferer = null
             }
         }
-        const model = await this.db.getModel(params.modelId)
+        const model = await getModel(params.modelId)
         if (!model) {
             throw new Error('model not found')
         }
@@ -51,14 +53,17 @@ export class AIMaskService {
         }
         this.inferer = new AIMaskInferer(model)
         await this.inferer.load(progressHandler)
+        await database.set('loaded_model', model.id)
         return this.inferer
     }
 
     async unloadModel() {
         if (this.inferer) {
             this.inferer.unload()
-            this.inferer.model.loaded = false
-            await this.db.setModel(this.inferer.model.id, this.inferer.model)
+            await database.set('loaded_model', undefined)
+            await InternalMessager.send({
+                type: 'models_updated',
+            }, true)
             this.inferer = null
         }
     }
@@ -70,7 +75,7 @@ export class AIMaskService {
                 caches.delete(cacheKey)
             })
         })
-        await this.db.init(true)
+        await database.init(true)
     }
 
     async onInfer(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
@@ -91,7 +96,10 @@ export class AIMaskService {
     async handleInternalMessage(message: InternalMessage) {
         switch (message.type) {
             case 'get_models':
-                return await this.db.getModels()
+                return {
+                    models,
+                    db: await database.getAll(),
+                }
             case 'clear_models_cache':
                 return await this.clearModelsCache()
             case 'unload_model':
@@ -106,7 +114,7 @@ export class AIMaskService {
             case 'infer':
                 return this.onInfer(request.params, streamhandler)
             case 'get_models':
-                return this.db.getModels()
+                return models
             default:
                 throw new Error(`unexpected request`)
         }

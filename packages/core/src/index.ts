@@ -1,4 +1,5 @@
 export * from './ExtensionMessager'
 export * from './actions'
 export * from './models'
+export * from './config'
 export * from './OpenAI_stubs'

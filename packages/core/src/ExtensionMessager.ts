@@ -1,5 +1,3 @@
-import { AIActions } from "actions";
-
 const EXTENSION_ID = "npgbhebmpolpcblmonkddamngjcmppnd";
 
 type WebMessageBase = {
@@ -37,7 +35,7 @@ export class ExtensionMessager<T extends MessageRequest> {
 
     private onConnect(port: chrome.runtime.Port) {
         port.onMessage.addListener(async (message: WebMessageRequest) => {
-            console.log('[ExtensionMessager] onMessage', message)
+            // console.log('[ExtensionMessager] onMessage', message)
             if (!this.handler) {
                 console.log('[ExtensionMessager] connection from web but no handler')
                 return
@@ -48,7 +46,7 @@ export class ExtensionMessager<T extends MessageRequest> {
             }
             const { messageId, request } = message
             const streamHandler = (data: any) => {
-                console.log('[ExtensionMessager] onMessage stream response', message, data)
+                // console.log('[ExtensionMessager] onMessage stream response', message, data)
                 port.postMessage({
                     messageId,
                     type: 'stream',
@@ -57,14 +55,14 @@ export class ExtensionMessager<T extends MessageRequest> {
             }
             try {
                 const response = await this.handler(request, streamHandler)
-                console.log('[ExtensionMessager] onMessage response', message, response)
+                // console.log('[ExtensionMessager] onMessage response', message, response)
                 port.postMessage({
                     messageId,
                     type: 'success',
                     data: response,
                 } satisfies WebMessageResponse)
             } catch (error: any) {
-                console.log('[ExtensionMessager] onMessage error response', message, error)
+                // console.log('[ExtensionMessager] onMessage error response', message, error)
                 port.postMessage({
                     messageId,
                     type: 'error',

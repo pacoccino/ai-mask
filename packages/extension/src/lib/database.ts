@@ -2,40 +2,24 @@ import localforage from "localforage";
 import { Model } from "@ai-mask/core";
 import { InternalMessager } from "./InternalMessager";
 
-export const INITIAL_MODELS: Model[] = [
-    {
-        id: 'Llama-2-7b-chat-hf-q4f16_1',
-        name: 'Llama2 7B Chat',
-        engine: 'web-llm',
-        task: 'chat',
-    },
-    {
-        id: 'Mistral-7B-Instruct-v0.2-q4f16_1',
-        name: 'Mistral 7B Instruct',
-        engine: 'web-llm',
-        task: 'chat',
-    },
-    {
-        id: 'gemma-2b-it-q4f32_1',
-        name: 'Gemma 2B',
-        engine: 'web-llm',
-        task: 'chat',
-    },
-    {
-        id: 'Phi2-q4f16_1',
-        name: 'Phi-2',
-        engine: 'web-llm',
-        task: 'chat',
-    },
-    {
-        id: 'Xenova/nllb-200-distilled-600M',
-        name: 'NLLB 600M',
-        engine: 'transformers.js',
-        task: 'translation',
-    },
-]
+export interface DB_Type {
+    cached_models: Array<Model['id']>,
+    cache_progress: Array<{ id: Model['id'], progress: number }>,
+    loaded_model: Model['id'] | undefined
+    initialized: true
+}
 
-export class Database {
+export const INITIAL_DB: DB_Type = {
+    cached_models: [],
+    cache_progress: [],
+    loaded_model: undefined,
+    initialized: true,
+}
+
+type DB_Type_Keys = keyof DB_Type
+type DB_Type_Value = DB_Type[DB_Type_Keys]
+
+class Database {
     lf: LocalForage
 
     constructor() {
@@ -46,63 +30,61 @@ export class Database {
                 localforage.LOCALSTORAGE
             ],
         });
+        this.init()
     }
 
     async init(reset = false) {
-        if (reset) {
-            await this.setModels(INITIAL_MODELS);
+        const initialized = await this.get('initialized')
+        if (!reset && !!initialized) {
             return
         }
+        for (const key in INITIAL_DB) {
+            await this.set(key as DB_Type_Keys, INITIAL_DB[key as DB_Type_Keys] as DB_Type_Value)
+        }
+    }
 
-        const models = await this.getModels()
-        for (const model of INITIAL_MODELS) {
-            const match = models.find(m => m.id === model.id)
-            if (match) {
-                Object.assign(match, {
-                    ...model,
-                    loaded: false,
-                })
-                await this.setModel(match.id, match)
-            } else {
-                await this.setModel(model.id, model)
+    async set(key: DB_Type_Keys, value: DB_Type_Value): Promise<void> {
+        await this.lf.setItem(key, value)
+        await InternalMessager.send({ type: 'db_updated', key, value }, true)
+    }
+
+    async get<T extends DB_Type_Keys>(key: T): Promise<typeof INITIAL_DB[T]> {
+        return await this.lf.getItem(key) as typeof INITIAL_DB[T]
+    }
+
+    async getAll(): Promise<DB_Type> {
+        const db: any = {}
+        for (const key in INITIAL_DB) {
+            db[key] = await this.get(key as DB_Type_Keys)
+        }
+        return db as DB_Type
+
+    }
+
+    async setProgress(id: Model['id'], progress: number) {
+        const load_progress = await this.get('cache_progress')
+        const index = load_progress.findIndex(item => item.id === id)
+        if (index === -1) {
+            load_progress.push({ id, progress })
+        } else {
+            load_progress[index].progress = progress
+        }
+        await this.set('cache_progress', load_progress)
+    }
+
+    async setCached(id: Model['id'], cached: boolean = true) {
+        let cached_models = await this.get('cached_models')
+
+        if (cached) {
+            const model = cached_models.find(item => item === id)
+            if (!model) {
+                cached_models.push(id)
             }
+        } else {
+            cached_models = cached_models.filter(m => m !== id)
         }
-    }
-
-    async setModel(modelId: string, model: Model) {
-        const models = await this.getModels()
-        const modelIndex = models.findIndex(m => m.id === modelId)
-
-        if (modelIndex === -1) models.push(model)
-        else models[modelIndex] = model
-
-        await this.lf.setItem('models', models);
-
-        await InternalMessager.send({
-            type: 'models_updated',
-        }, true)
-    }
-
-    async setModels(models: Model[]) {
-        await this.lf.setItem('models', models);
-
-        await InternalMessager.send({
-            type: 'models_updated',
-        }, true)
-    }
-
-    async getModels(): Promise<Model[]> {
-        const models = await this.lf.getItem('models') as Model[]
-
-        if (!models) {
-            await this.setModels(INITIAL_MODELS);
-        }
-
-        return models || INITIAL_MODELS
-    }
-    async getModel(modelId: string): Promise<Model | undefined> {
-        const models = await this.getModels()
-        const model = models.find(m => m.id === modelId)
-        return model
+        await this.set('cached_models', cached_models)
     }
 }
+
+export const database = new Database()

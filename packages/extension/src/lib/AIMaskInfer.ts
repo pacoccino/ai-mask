@@ -4,7 +4,7 @@ import { env, pipeline, TranslationPipeline } from '@xenova/transformers';
 import { AIActionParams, MessagerStreamHandler, Model, ChatCompletionParams, CompletionParams, TranslationParams } from "@ai-mask/core";
 import { GenerateProgressCallback } from "@mlc-ai/web-llm/lib/types";
 
-import webLLMAppConfig from './mlc/appConfig'
+import { config } from '@ai-mask/core'
 
 export interface ModelLoadReport {
     progress: number
@@ -78,7 +78,7 @@ export class AIMaskInferer {
                     }
                     progressCallback && progressCallback(report)
                 });
-                await this.engineInstance.reload(this.model.id, undefined, webLLMAppConfig)
+                await this.engineInstance.reload(this.model.id, undefined, config.mlc.appConfig)
                 break;
             default:
                 throw new Error('engine not supported')
@@ -155,7 +155,6 @@ export class AIMaskInferer {
         await engine.resetChat()
 
         const progressHandler: GenerateProgressCallback = (_: number, currentMessage: string) => {
-            console.log(_, currentMessage)
             streamhandler(currentMessage)
         }
 
