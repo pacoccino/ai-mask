@@ -36,7 +36,8 @@ export function WebAIProvider({ children }: { children: React.ReactNode }) {
             setClientState('error')
         }
 
-        // TODO return unlistener
+        return () =>
+            webAIClient.current?.dispose()
     }, [])
 
     const state = {

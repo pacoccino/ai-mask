@@ -77,40 +77,53 @@ export class ExtensionMessager<T extends MessageRequest> {
 
 export class ExtensionMessagerClient<T extends MessageRequest> {
     handlers: { [key: string]: MessagerResponseHandler }
-    port: chrome.runtime.Port
+    onMessageHandler: ((message: WebMessageResponse) => void) | undefined
+    port: chrome.runtime.Port | undefined
 
     constructor({ name }: { name: string }) {
         this.handlers = {}
+        this.listen(name)
+    }
+
+    private listen(name: string) {
         this.port = chrome.runtime.connect(
             EXTENSION_ID,
             {
                 name,
             }
         )
-        this.listen()
-    }
-
-    private listen() {
-        this.port.onMessage.addListener((message: WebMessageResponse) => {
-            console.log('[ExtensionMessagerClient] onMessage', message)
+        this.onMessageHandler = (message: WebMessageResponse) => {
+            //console.log('[ExtensionMessagerClient] onMessage', message)
             const { messageId } = message
             const handler = this.handlers[messageId]
             if (!handler) {
-                console.error('ExtensionMessager: no handler for message', message)
+                console.error('[ExtensionMessagerClient] no handler for message', message)
                 return
             }
             handler(message)
-        })
+        }
+        this.port.onMessage.addListener(this.onMessageHandler)
+    }
+
+    dispose() {
+        if (this.onMessageHandler && this.port) {
+            this.port.onMessage.removeListener(this.onMessageHandler)
+            this.port.disconnect()
+            this.onMessageHandler = undefined
+            this.port = undefined
+        }
     }
 
     send(request: MessageRequest<T['action'], T['params']>, streamCallback?: MessagerStreamHandler): Promise<any> {
-        console.log('[ExtensionMessager] send', request)
         return new Promise((resolve, reject) => {
+            if (!this.port || !this.onMessageHandler) throw new Error('ExtensionMessagerClient disposed')
+            // console.log('[ExtensionMessagerClient] send', request)
+
             const now = Date.now()
             const rand = Math.random().toString(36).substring(7)
             const messageId = `${now}-${rand}`
             const callback = (response: WebMessageResponse) => {
-                console.log('[ExtensionMessager] send callback', request, response)
+                // console.log('[ExtensionMessagerClient] send callback', request, response)
 
                 if (response.type === 'error') {
                     reject(new Error(response.data))

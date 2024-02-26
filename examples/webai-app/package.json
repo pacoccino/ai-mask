@@ -1,5 +1,5 @@
 {
-  "name": "webai-app",
+  "name": "@webai-ext/webai-demo-app",
   "private": true,
   "version": "0.1.0",
   "type": "module",

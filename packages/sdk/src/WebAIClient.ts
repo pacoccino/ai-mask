@@ -14,6 +14,10 @@ export class WebAIClient {
         }
     }
 
+    dispose() {
+        this.messager.dispose()
+    }
+
     async request<T>(request: AIAction<T>, streamHandler?: MessagerStreamHandler): Promise<any> {
         return this.messager.send(request, streamHandler)
     }

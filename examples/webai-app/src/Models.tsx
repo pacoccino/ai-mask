@@ -46,7 +46,7 @@ export default function Models({ task }: { task: Model['task'] }) {
       >
         {taskModels.map(model => (
           <option key={model.id} value={model.id}>
-            {model.id}
+            {model.name}
           </option>
         ))}
       </select>

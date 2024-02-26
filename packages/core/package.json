@@ -3,7 +3,6 @@
     "source": "src/index.ts",
     "type": "module",
     "main": "dist/index",
-    "module": "dist/index.mjs",
     "types": "dist/index",
     "scripts": {
         "dev": "pnpm run build --watch",

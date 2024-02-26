@@ -3,7 +3,8 @@
     "scripts": {
         "build": "pnpm run --recursive build",
         "lint": "pnpm run --recursive lint",
-        "dev": "pnpm run --parallel dev"
+        "dev": "pnpm run --parallel dev",
+        "dev-p": "pnpm run --parallel --filter \"./packages/*\" dev"
     },
     "engines": {
         "node": ">=20",

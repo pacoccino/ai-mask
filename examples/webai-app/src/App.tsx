@@ -39,7 +39,6 @@ export default function App() {
       {clientState === 'loading' &&
         <div className='text-orange-500'>Loading client...</div>
       }
-
     </div>
   )
 }

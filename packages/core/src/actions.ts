@@ -1,11 +1,27 @@
 import { MessageRequest } from "./ExtensionMessager"
 import { Model } from "./models"
+import { ChatCompletionParams } from "OpenAI_stubs"
+
+export type CompletionParams = {
+    prompt: string
+}
+export type TranslationParams = {
+    inputText: string
+    sourceLang: string
+    destLang: string
+}
+
+export type WebAIInferParams =
+    | CompletionParams
+    | ChatCompletionParams
+    | TranslationParams
+
 
 export type AIActions =
-    MessageRequest<'infer', {
+    | MessageRequest<'infer', {
         modelId: Model['id']
         task: Model['task']
-        inferParams: any
+        inferParams: WebAIInferParams
     }>
     | MessageRequest<'get_models'>
 

@@ -18,3 +18,14 @@ Transformers.js will be supported next.
 Inference in the browser is getting quite a traction, but the current libraries (web-llm, transformers.js) store models in the browser cache, which is per-domain. This means that if multiple web apps use the same models, it needs to be downloaded once per domain, which can use a lot of disk space.
 
 With this extension, the models are cached only once and served to the websites conveniently though an unified SDK
+
+
+## TODO
+- [ ] Match OpenAI SDK API / Provide ReadableStream from WebAIClient
+- [ ] Pull request in one popular AI app
+- [ ] Implement more tasks
+- [ ] Add more models
+- [ ] Documentation
+- [ ] Unload model from memory after being inactive for a while
+- [ ] Deploy demo app
+- [ ] Deploy extension

@@ -1,5 +1,5 @@
 import { ExtensionMessager, MessagerStreamHandler, AIActions, AIActionParams } from "@webai-ext/core";
-import { Database } from "./database";
+import { Database } from "./Database";
 import { InternalMessage, InternalMessager } from "./InternalMessager";
 import { ModelLoadReport, WebAIInferer } from "./WebAIInfer";
 
@@ -45,6 +45,9 @@ export class WebAIService {
         const model = await this.db.getModel(params.modelId)
         if (!model) {
             throw new Error('model not found')
+        }
+        if (model.task !== params.task) {
+            throw new Error('incompatible task and model')
         }
         this.inferer = new WebAIInferer(model)
         await this.inferer.load(progressHandler)
@@ -99,7 +102,6 @@ export class WebAIService {
     }
 
     async handleAppMessage(request: AIActions, streamhandler: MessagerStreamHandler): Promise<any> {
-        console.log('handleAppMessage', request)
         switch (request.action) {
             case 'infer':
                 return this.onInfer(request.params, streamhandler)
