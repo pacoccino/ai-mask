@@ -11,7 +11,7 @@ export type TranslationParams = {
     destLang: string
 }
 
-export type WebAIInferParams =
+export type AIMaskInferParams =
     | CompletionParams
     | ChatCompletionParams
     | TranslationParams
@@ -21,7 +21,7 @@ export type AIActions =
     | MessageRequest<'infer', {
         modelId: Model['id']
         task: Model['task']
-        inferParams: WebAIInferParams
+        inferParams: AIMaskInferParams
     }>
     | MessageRequest<'get_models'>
 

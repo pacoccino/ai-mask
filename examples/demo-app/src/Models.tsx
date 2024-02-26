@@ -1,20 +1,20 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { Model } from '@webai-ext/sdk';
-import { useWebAI } from './context';
+import { Model } from '@ai-mask/sdk';
+import { useAIMask } from './context';
 
 export default function Models({ task }: { task: Model['task'] }) {
-  const { webAIClient, selectedModel, setSelectedModel } = useWebAI()
+  const { aiMaskClient, selectedModel, setSelectedModel } = useAIMask()
 
   const [models, setModels] = useState<Model[]>([])
   const [taskModels, setTaskModels] = useState<Model[]>([])
 
   useEffect(() => {
-    if (!webAIClient) return
-    webAIClient.getModels().then(models => {
+    if (!aiMaskClient) return
+    aiMaskClient.getModels().then(models => {
       setModels(models)
       setSelectedModel(models[0])
     })
-  }, [webAIClient, setModels, setSelectedModel])
+  }, [aiMaskClient, setModels, setSelectedModel])
 
   useEffect(() => {
     const taskModels = models.filter(m => m.task === task)
@@ -28,7 +28,7 @@ export default function Models({ task }: { task: Model['task'] }) {
     if (model) setSelectedModel(model)
   }, [models, setSelectedModel])
 
-  if (!webAIClient) {
+  if (!aiMaskClient) {
     return (
       <div className="">
         <p>Not ready</p>

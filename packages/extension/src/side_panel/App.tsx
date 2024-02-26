@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Model } from "@webai-ext/core";
+import { Model } from "@ai-mask/core";
 import { InternalMessage, InternalMessager } from "../lib/InternalMessager";
 
 export default function App() {
@@ -37,7 +37,7 @@ export default function App() {
 
     return (
         <div className="flex flex-col items-center p-4">
-            <h1>WebAI Extension</h1>
+            <h1>AIMask Extension</h1>
             <div className="flex space-x-2 py-4">
                 <button
                     onClick={clearModels}

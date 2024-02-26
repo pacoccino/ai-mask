@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "WebAI-Extension",
+  "name": "AIMask-Extension",
   "version": "0.1.0",
   "description": "Run AI models in your browser",
   "icons": {

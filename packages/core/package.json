@@ -1,5 +1,5 @@
 {
-    "name": "@webai-ext/core",
+    "name": "@ai-mask/core",
     "source": "src/index.ts",
     "type": "module",
     "main": "dist/index",

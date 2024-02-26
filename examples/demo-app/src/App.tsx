@@ -1,17 +1,17 @@
 import Prompt from './Prompt';
 import Models from './Models';
-import { useWebAI } from './context';
+import { useAIMask } from './context';
 import { useState } from 'react';
-import { Model } from '@webai-ext/sdk';
+import { Model } from '@ai-mask/sdk';
 import Translate from './Translate';
 
 export default function App() {
-  const { webAIClient, clientState } = useWebAI()
+  const { aiMaskClient, clientState } = useAIMask()
   const [task, setTask] = useState<Model['task']>('translation')
   return (
     <div className="flex flex-col items-center p-4">
-      <h1>WebAI Example App</h1>
-      <p className='mb-4'>Example app for WebAI using chome extension for AI inference</p>
+      <h1>AI-Mask Demo App</h1>
+      <p className='mb-4'>Example app for using AI-Mask chome extension for AI inference</p>
 
       <div className='flex flex-col md:flex-row mb-4'>
         <div className='mb-2 md:mb-0 md:mr-2'>
@@ -27,7 +27,7 @@ export default function App() {
         </div>
         <Models task={task} />
       </div>
-      {clientState === 'loaded' && webAIClient &&
+      {clientState === 'loaded' && aiMaskClient &&
         <>
           {task === 'completion' && <Prompt />}
           {task === 'translation' && <Translate />}

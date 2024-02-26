@@ -1,7 +1,7 @@
 import { ChatModule, InitProgressReport } from "@mlc-ai/web-llm";
 import { env, pipeline, TranslationPipeline } from '@xenova/transformers';
 
-import { AIActionParams, MessagerStreamHandler, Model, ChatCompletionParams, CompletionParams, TranslationParams } from "@webai-ext/core";
+import { AIActionParams, MessagerStreamHandler, Model, ChatCompletionParams, CompletionParams, TranslationParams } from "@ai-mask/core";
 import { GenerateProgressCallback } from "@mlc-ai/web-llm/lib/types";
 
 import webLLMAppConfig from './mlc/appConfig'
@@ -15,7 +15,7 @@ export interface ModelLoadReport {
 // https://github.com/xenova/transformers.js/pull/462
 env.backends.onnx.wasm.numThreads = 1
 
-export class WebAIInferer {
+export class AIMaskInferer {
     model: Model
     inMemory: boolean = false
     engineInstance: TranslationPipeline | ChatModule | null = null
@@ -28,7 +28,7 @@ export class WebAIInferer {
         return !!(this.engineInstance && this.inMemory)
     }
 
-    getEngine(): NonNullable<WebAIInferer['engineInstance']> {
+    getEngine(): NonNullable<AIMaskInferer['engineInstance']> {
         if (!this.isReady() || !this.engineInstance) throw new Error('inferer not ready')
         return this.engineInstance
     }

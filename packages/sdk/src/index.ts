@@ -1,2 +1,2 @@
-export * from './WebAIClient'
-export * from '@webai-ext/core'
+export * from './AIMaskClient'
+export * from '@ai-mask/core'

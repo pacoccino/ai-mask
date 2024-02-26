@@ -1,10 +1,10 @@
-import { Model, ExtensionMessagerClient, MessagerStreamHandler, AIActionParams, AIActions, AIAction } from "@webai-ext/core";
+import { Model, ExtensionMessagerClient, MessagerStreamHandler, AIActionParams, AIActions, AIAction } from "@ai-mask/core";
 
-export class WebAIClient {
+export class AIMaskClient {
     messager: ExtensionMessagerClient<AIActions>
 
-    constructor() {
-        this.messager = new ExtensionMessagerClient<AIActions>({ name: 'webai-app' })
+    constructor(params?: { name?: string }) {
+        this.messager = new ExtensionMessagerClient<AIActions>({ name: params?.name || 'ai-mask-app' })
     }
 
     init() {

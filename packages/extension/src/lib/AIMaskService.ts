@@ -1,13 +1,13 @@
-import { ExtensionMessager, MessagerStreamHandler, AIActions, AIActionParams } from "@webai-ext/core";
+import { ExtensionMessager, MessagerStreamHandler, AIActions, AIActionParams } from "@ai-mask/core";
 import { Database } from "./Database";
 import { InternalMessage, InternalMessager } from "./InternalMessager";
-import { ModelLoadReport, WebAIInferer } from "./WebAIInfer";
+import { ModelLoadReport, AIMaskInferer } from "./AIMaskInfer";
 
-export class WebAIService {
+export class AIMaskService {
     infering: boolean = false
     messager: ExtensionMessager<AIActions>
     db: Database = new Database()
-    inferer: WebAIInferer | null = null
+    inferer: AIMaskInferer | null = null
 
     //unloadTimeout: number | undefined
     //static unloadTimeoutTime = 10
@@ -19,7 +19,7 @@ export class WebAIService {
         this.db.init().catch(console.error)
     }
 
-    async getInferer(params: AIActionParams<'infer'>): Promise<WebAIInferer> {
+    async getInferer(params: AIActionParams<'infer'>): Promise<AIMaskInferer> {
         const progressHandler = (report: ModelLoadReport) => {
             if (!this.inferer) return
             this.inferer.model.progress = report.progress
@@ -49,7 +49,7 @@ export class WebAIService {
         if (model.task !== params.task) {
             throw new Error('incompatible task and model')
         }
-        this.inferer = new WebAIInferer(model)
+        this.inferer = new AIMaskInferer(model)
         await this.inferer.load(progressHandler)
         return this.inferer
     }

@@ -1,14 +1,14 @@
 import { useCallback, useState } from 'react';
-import { useWebAI } from './context';
+import { useAIMask } from './context';
 
 export default function Prompt() {
-    const { webAIClient, selectedModel } = useWebAI()
+    const { aiMaskClient, selectedModel } = useAIMask()
 
     const [prompt, setPrompt] = useState<string>('')
     const [response, setResponse] = useState<string>('')
 
     const generate = useCallback(async () => {
-        if (!webAIClient || !selectedModel) return
+        if (!aiMaskClient || !selectedModel) return
         const modelId = selectedModel.id
 
         setResponse('generating...')
@@ -16,7 +16,7 @@ export default function Prompt() {
             const streamCallback = (response: string) => {
                 setResponse(`${response}...`);
             }
-            const response = await webAIClient.infer(
+            const response = await aiMaskClient.infer(
                 {
                     modelId,
                     task: 'completion',
@@ -32,9 +32,9 @@ export default function Prompt() {
             const message = (error instanceof Error) ? error.message : String(error)
             setResponse(`generation error: ${message}`);
         }
-    }, [webAIClient, selectedModel, prompt, setResponse])
+    }, [aiMaskClient, selectedModel, prompt, setResponse])
 
-    if (!webAIClient) {
+    if (!aiMaskClient) {
         return (
             <div className="">
                 <p>Not ready</p>

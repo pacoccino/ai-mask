@@ -9,10 +9,10 @@
       "@/*": [
         "./*"
       ],
-      "@webai-ext/core/*": [
+      "@ai-mask/core/*": [
         "../../core/src/*",
       ],
-      "@webai-ext/core": [
+      "@ai-mask/core": [
         "../../core/src/index",
       ]
     },

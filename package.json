@@ -1,10 +1,11 @@
 {
-    "name": "webai-ext-monorepo",
+    "name": "@ai-mask/monorepo",
     "scripts": {
-        "build": "pnpm run --recursive build",
-        "lint": "pnpm run --recursive lint",
-        "dev": "pnpm run --parallel dev",
-        "dev-p": "pnpm run --parallel --filter \"./packages/*\" dev"
+        "build": "pnpm run --recursive --filter=!./forks/* build",
+        "clean": "pnpm run --recursive --filter=!./forks/* clean",
+        "lint": "pnpm run --recursive --filter=!./forks/* lint",
+        "dev": "pnpm run --parallel --filter=!./forks/* dev ",
+        "dev-p": "pnpm run --parallel --filter=!./forks/* dev"
     },
     "engines": {
         "node": ">=20",

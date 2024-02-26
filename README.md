@@ -1,4 +1,4 @@
-# WebAI Extension
+# AI-Mask
 
 > This is an ongoing experimentation
 
@@ -21,7 +21,7 @@ With this extension, the models are cached only once and served to the websites 
 
 
 ## TODO
-- [ ] Match OpenAI SDK API / Provide ReadableStream from WebAIClient
+- [ ] Match OpenAI SDK API / Provide ReadableStream from AIMasklient
 - [ ] Pull request in one popular AI app
 - [ ] Implement more tasks
 - [ ] Add more models
@@ -29,3 +29,7 @@ With this extension, the models are cached only once and served to the websites 
 - [ ] Unload model from memory after being inactive for a while
 - [ ] Deploy demo app
 - [ ] Deploy extension
+- [ ] Include react Hooks/utilities in SDK
+- [ ] Improve extension panel: 
+    - [ ] search/filter models
+    - [ ] download/remove individual models

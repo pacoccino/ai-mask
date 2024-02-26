@@ -14,6 +14,9 @@ importers:
 
   examples/chatbot-ui:
     dependencies:
+      '@ai-mask/sdk':
+        specifier: workspace:^
+        version: link:../../packages/sdk
       '@anthropic-ai/sdk':
         specifier: ^0.12.4
         version: 0.12.8
@@ -128,9 +131,6 @@ importers:
       '@vercel/edge-config':
         specifier: ^0.4.1
         version: 0.4.1
-      '@webai-ext/sdk':
-        specifier: workspace:^
-        version: link:../../packages/sdk
       '@xenova/transformers':
         specifier: ^2.13.4
         version: 2.15.1
@@ -310,9 +310,9 @@ importers:
         specifier: ^5
         version: 5.3.3
 
-  examples/webai-app:
+  examples/demo-app:
     dependencies:
-      '@webai-ext/sdk':
+      '@ai-mask/sdk':
         specifier: workspace:^
         version: link:../../packages/sdk
       react:
@@ -382,7 +382,7 @@ importers:
 
   packages/extension:
     dependencies:
-      '@webai-ext/core':
+      '@ai-mask/core':
         specifier: workspace:^
         version: link:../core
       '@xenova/transformers':
@@ -401,6 +401,9 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
     devDependencies:
+      '@ai-mask/sdk':
+        specifier: workspace:^
+        version: link:../sdk
       '@crxjs/vite-plugin':
         specifier: ^1.0.14
         version: 1.0.14(vite@5.1.4)
@@ -425,9 +428,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.1.4)
-      '@webai-ext/sdk':
-        specifier: workspace:^
-        version: link:../sdk
       autoprefixer:
         specifier: ^10.4.17
         version: 10.4.17(postcss@8.4.35)
@@ -455,7 +455,7 @@ importers:
 
   packages/sdk:
     dependencies:
-      '@webai-ext/core':
+      '@ai-mask/core':
         specifier: workspace:^
         version: link:../core
     devDependencies:

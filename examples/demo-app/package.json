@@ -1,5 +1,5 @@
 {
-  "name": "@webai-ext/webai-demo-app",
+  "name": "@ai-mask/demo-app",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@webai-ext/sdk": "workspace:^",
+    "@ai-mask/sdk": "workspace:^",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

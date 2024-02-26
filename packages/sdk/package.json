@@ -1,5 +1,5 @@
 {
-    "name": "@webai-ext/sdk",
+    "name": "@ai-mask/sdk",
     "type": "module",
     "source": "src/index.ts",
     "main": "dist/index",
@@ -10,7 +10,7 @@
         "clean": "rimraf ./dist"
     },
     "dependencies": {
-        "@webai-ext/core": "workspace:^"
+        "@ai-mask/core": "workspace:^"
     },
     "devDependencies": {
         "@types/chrome": "^0.0.261",

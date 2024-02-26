@@ -1,5 +1,5 @@
 import localforage from "localforage";
-import { Model } from "@webai-ext/core";
+import { Model } from "@ai-mask/core";
 import { InternalMessager } from "./InternalMessager";
 
 export const INITIAL_MODELS: Model[] = [
@@ -40,7 +40,7 @@ export class Database {
 
     constructor() {
         this.lf = localforage.createInstance({
-            name: 'web-ai-extension',
+            name: 'ai-mask-extension',
             driver: [
                 localforage.INDEXEDDB,
                 localforage.LOCALSTORAGE

@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
-import { useWebAI } from './context';
+import { useAIMask } from './context';
 import LanguageSelector from './components/LanguageSelector';
 
 export default function Translate() {
-    const { webAIClient, selectedModel } = useWebAI()
+    const { aiMaskClient, selectedModel } = useAIMask()
 
     const [inputText, setInputText] = useState<string>('')
     const [outputText, setOutputText] = useState<string>('')
@@ -11,7 +11,7 @@ export default function Translate() {
     const [destLang, setOutputLang] = useState<string>('eng_Latn')
 
     const generate = useCallback(async () => {
-        if (!webAIClient || !selectedModel) return
+        if (!aiMaskClient || !selectedModel) return
         const modelId = selectedModel.id
 
         setOutputText('generating...')
@@ -19,7 +19,7 @@ export default function Translate() {
             const streamCallback = (response: string) => {
                 setOutputText(`${response}...`);
             }
-            const response = await webAIClient.infer(
+            const response = await aiMaskClient.infer(
                 {
                     modelId,
                     task: 'translation',
@@ -37,7 +37,7 @@ export default function Translate() {
             const message = (error instanceof Error) ? error.message : String(error)
             setOutputText(`generation error: ${message}`);
         }
-    }, [webAIClient, selectedModel, inputText, setOutputText, sourceLang, destLang])
+    }, [aiMaskClient, selectedModel, inputText, setOutputText, sourceLang, destLang])
 
     const handleSourceLangChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
         setInputLang(e.target.value)
@@ -47,7 +47,7 @@ export default function Translate() {
         setOutputLang(e.target.value)
     }, [])
 
-    if (!webAIClient) {
+    if (!aiMaskClient) {
         return (
             <div className="">
                 <p>Not ready</p>
