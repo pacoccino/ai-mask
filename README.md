@@ -6,22 +6,35 @@
 
 [Download extension](#) | [Supported apps](#supported-apps) | [Integration guide](#for-integrators)
 
-> This is an experimental project at an MVP stage. **Feedback will be greatly appreciated for the future of this project.**
+> This is an experimental project at an MVP stage. 
+> **Feedback will be greatly appreciated for the future of this project.**
  
 ## What ?
 
-AI-Mask is a chrome **web extension** that execute **AI** models **in-browser** for apps which needs it, for **free**, and with full-**privacy**.
+AI-Mask is a chrome **web extension** that serves as a gateway to  **AI** models execution. It runs model **on-device** for apps which needs it, for **free**, and with full-**privacy**. 
+
+See it as the [Metamask](https://metamask.io/) of AI. 
 
 ## Why ?
 
 On-device AI inference is getting quite a traction recently. Most of our devices are already capable of executing machine learning models and software compatibility is ready.
 
-  
-Thanks to some [amazing](https://github.com/mlc-ai/web-llm) [libraries](https://github.com/xenova/transformers.js), running machine learning models in the browser has become ridiculously easy, accelerated with WASM and WebGPU. This means they'll work and exploit full capacity on virtually any device, hardware and operating system.
+Thanks to some [amazing](https://github.com/mlc-ai/web-llm) [libraries](https://github.com/xenova/transformers.js), running machine learning models in the browser has become ridiculously easy, accelerated with WASM and WebGPU. This means they'll work and run at full-performance on virtually any device, hardware and operating system.
 
-But SOTA web libraries store models in the browser cache, which is per-domain. This means that if multiple web apps use the same models, it needs to be downloaded once per domain, which can use a lot of disk space.
+But SOTA web inference libraries store models in the browser cache, which is per-domain. This means that if multiple web apps use the same models, it needs to be downloaded once per domain, which can use a lot of disk space.
 
 With this extension, the models are cached only once and served to the websites conveniently though an unified SDK.
+
+## Future
+
+This is a test to see if it's interesting and getting traction from users and app developers.
+
+Another major feature planned is also to proxy requests to OpenAI-like APIs. Users would store their API keys in the extension, and apps would query the extension to run models.
+
+This would solve:
+- Users won't have to share API keys with non-trusted apps anymore
+- Users won't share private data with apps
+- App developers won't need to have a backend server which proxies API request to alleviate cors problem and manipulate responses
 
 ## Usage
 
@@ -103,17 +116,18 @@ pnpm run dev
 pnpm run build
 ```
 
-## TODO
+## Roadmap
 
+- [X] Documentation
+- [x] Deploy demo app
+- [ ] Deploy extension
 - [ ] Match OpenAI SDK API / Provide ReadableStream from AIMasklient
+- [ ] Proxy OpenAI-like API requests and store user keys
+- [ ] Include react Hooks/utilities in SDK
 - [ ] Pull request in one popular AI app
 - [ ] Implement more tasks
 - [ ] Add more models
-- [X] Documentation
 - [ ] Unload model from memory after being inactive for a while
-- [x] Deploy demo app
-- [ ] Deploy extension
-- [ ] Include react Hooks/utilities in SDK
 - [ ] Improve extension panel:
     - [ ] search/filter models
     - [ ] download/remove individual models
