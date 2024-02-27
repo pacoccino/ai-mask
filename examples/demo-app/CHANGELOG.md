@@ -1,5 +1,13 @@
 # @ai-mask/demo-app
 
+## 0.4.1
+
+### Patch Changes
+
+- extensionid
+- Updated dependencies
+  - @ai-mask/sdk@0.4.1
+
 ## 0.4.0
 
 ### Minor Changes

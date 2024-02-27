@@ -1,5 +1,11 @@
 # @ai-mask/core
 
+## 0.4.1
+
+### Patch Changes
+
+- extensionid
+
 ## 0.4.0
 
 ### Minor Changes
