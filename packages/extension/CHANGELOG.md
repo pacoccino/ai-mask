@@ -1,5 +1,16 @@
 # @ai-mask/chrome-extension
 
+## 0.4.0
+
+### Minor Changes
+
+- fix merge
+
+### Patch Changes
+
+- Updated dependencies
+  - @ai-mask/core@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes

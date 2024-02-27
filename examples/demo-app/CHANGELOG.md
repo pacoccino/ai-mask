@@ -1,5 +1,16 @@
 # @ai-mask/demo-app
 
+## 0.4.0
+
+### Minor Changes
+
+- fix merge
+
+### Patch Changes
+
+- Updated dependencies
+  - @ai-mask/sdk@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes
