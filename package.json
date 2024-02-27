@@ -20,6 +20,7 @@
         "pnpm": ">=8"
     },
     "devDependencies": {
+        "@changesets/cli": "^2.27.1",
         "typescript": "^5.3.3"
     }
 }
