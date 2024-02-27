@@ -5,7 +5,6 @@
 ### Minor Changes
 
 - 91647cc: popup
-- 4cfdb49: add AIMaskClient.isExtensionAvailable
 
 ### Patch Changes
 

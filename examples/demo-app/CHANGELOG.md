@@ -9,8 +9,6 @@
 ### Patch Changes
 
 - Updated dependencies [91647cc]
-- Updated dependencies [4cfdb49]
-  - @ai-mask/sdk@0.3.0
 
 ## 0.2.1
 
