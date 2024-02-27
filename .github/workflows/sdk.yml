@@ -3,28 +3,32 @@ on:
   push:
     branches:
       - main
+
 env:
   CI: true
-  PNPM_CACHE_FOLDER: .pnpm-store
+
+# Allow one concurrent deployment
+concurrency:
+  group: 'sdk'
+  cancel-in-progress: true
+
 jobs:
-  version:
+  publish:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code repository
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
         with:
-          fetch-depth: 0
-      - name: setup node.js
+          version: 8
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 14
-      - name: install pnpm
-        run: npm i pnpm@latest -g
+          node-version: 18
+          cache: 'pnpm'
       - name: Setup npmrc
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
-      - name: setup pnpm config
-        run: pnpm config set store-dir $PNPM_CACHE_FOLDER
       - name: install dependencies
         run: pnpm install
       - name: create and publish versions
