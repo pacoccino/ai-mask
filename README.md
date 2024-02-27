@@ -20,7 +20,9 @@ See it as the [Metamask](https://metamask.io/) of AI.
 [Try it !](https://pacoccino.github.io/ai-mask/)
 
 
-https://github.com/pacoccino/ai-mask/assets/1371207/003e3ae1-651d-4b95-8fc3-7aa73c0174b
+
+[AI-Mask Demo.mp4](https://github.com/pacoccino/ai-mask/assets/1371207/f75e8b27-c91a-4bc6-bd14-8eae0d68050f)
+
 
 
 ## Why ?
