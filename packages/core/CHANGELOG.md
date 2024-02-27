@@ -1,5 +1,11 @@
 # @ai-mask/core
 
+## 0.3.0
+
+### Minor Changes
+
+- 91647cc: popup
+
 ## 0.2.0
 
 ### Minor Changes
