@@ -27,8 +27,6 @@ jobs:
         with:
           node-version: 18
           cache: 'pnpm'
-      - name: Setup npmrc
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
       - name: install dependencies
         run: pnpm install
       - name: create and publish versions
@@ -36,6 +34,7 @@ jobs:
         with:
           commit: "chore: update versions"
           title: "chore: update versions"
-          publish: pnpm publish-sdk
+          publish: pnpm publish-sdk --no-git-checks
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
