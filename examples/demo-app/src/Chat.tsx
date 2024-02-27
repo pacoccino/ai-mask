@@ -45,19 +45,15 @@ export default function Chat() {
                 }
             ])
 
-            await aiMaskClient.infer(
+            await aiMaskClient.chat(modelId,
                 {
-                    modelId,
-                    task: 'chat',
-                    inferParams: {
-                        messages: [
-                            ...messages,
-                            {
-                                role: 'user',
-                                content: prompt
-                            }
-                        ],
-                    }
+                    messages: [
+                        ...messages,
+                        {
+                            role: 'user',
+                            content: prompt
+                        }
+                    ],
                 },
                 streamCallback
             );

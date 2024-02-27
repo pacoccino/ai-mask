@@ -112,11 +112,11 @@ export class AIMaskInferer {
 
         switch (params.task) {
             case 'chat':
-                return this.taskChat(params.inferParams as ChatCompletionParams, streamhandler)
+                return this.taskChat(params.params as ChatCompletionParams, streamhandler)
             case 'completion':
-                return this.taskCompletion(params.inferParams as CompletionParams, streamhandler)
+                return this.taskCompletion(params.params as CompletionParams, streamhandler)
             case 'translation':
-                return this.taskTranslation(params.inferParams as TranslationParams, streamhandler)
+                return this.taskTranslation(params.params as TranslationParams, streamhandler)
             default:
                 throw new Error('unsupported task ' + params.task)
         }

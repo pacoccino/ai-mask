@@ -1,4 +1,4 @@
-import { Model, ExtensionMessagerClient, MessagerStreamHandler, AIActionParams, AIActions, AIAction } from "@ai-mask/core";
+import { Model, ExtensionMessagerClient, MessagerStreamHandler, AIActionParams, AIActions, AIAction, ChatCompletionParams, TranslationParams } from "@ai-mask/core";
 
 export class AIMaskClient {
     messager: ExtensionMessagerClient<AIActions>
@@ -7,18 +7,11 @@ export class AIMaskClient {
         this.messager = new ExtensionMessagerClient<AIActions>({ name: params?.name || 'ai-mask-app' })
     }
 
-    init() {
-        try {
-        } catch (e) {
-            throw new Error('failed to connect')
-        }
-    }
-
     dispose() {
         this.messager.dispose()
     }
 
-    async request<T>(request: AIAction<T>, streamHandler?: MessagerStreamHandler): Promise<any> {
+    private async request<T>(request: AIAction<T>, streamHandler?: MessagerStreamHandler): Promise<any> {
         return this.messager.send(request, streamHandler)
     }
 
@@ -26,6 +19,27 @@ export class AIMaskClient {
         return this.request({
             action: 'infer',
             params,
+        }, streamCallback)
+    }
+
+    async chat(modelId: Model['id'], params: ChatCompletionParams, streamCallback?: MessagerStreamHandler): Promise<string> {
+        return this.request({
+            action: 'infer',
+            params: {
+                modelId,
+                task: 'chat',
+                params,
+            },
+        }, streamCallback)
+    }
+    async translate(modelId: Model['id'], params: TranslationParams, streamCallback?: MessagerStreamHandler): Promise<string> {
+        return this.request({
+            action: 'infer',
+            params: {
+                modelId,
+                task: 'translation',
+                params,
+            },
         }, streamCallback)
     }
 

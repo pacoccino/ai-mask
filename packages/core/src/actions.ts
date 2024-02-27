@@ -21,7 +21,7 @@ export type AIActions =
     | MessageRequest<'infer', {
         modelId: Model['id']
         task: Model['task']
-        inferParams: AIMaskInferParams
+        params: AIMaskInferParams
     }>
     | MessageRequest<'get_models'>
 

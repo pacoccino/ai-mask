@@ -19,15 +19,11 @@ export default function Translate() {
             const streamCallback = (response: string) => {
                 setOutputText(`${response}...`);
             }
-            const response = await aiMaskClient.infer(
+            const response = await aiMaskClient.translate(modelId,
                 {
-                    modelId,
-                    task: 'translation',
-                    inferParams: {
-                        sourceLang,
-                        destLang,
-                        inputText
-                    }
+                    sourceLang,
+                    destLang,
+                    inputText
                 },
                 streamCallback
             );

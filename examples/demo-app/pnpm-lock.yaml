@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@ai-mask/sdk':
-    specifier: ^0.1.2
-    version: 0.1.2
+    specifier: ^0.1.3
+    version: 0.1.3
   clsx:
     specifier: ^2.1.0
     version: 2.1.0
@@ -72,14 +72,14 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /@ai-mask/core@0.1.2:
+  /@ai-mask/core@0.1.3:
     resolution: {integrity: sha512-DbgrVogE909oWx6xORugCNPiunLXi+jekcdCUiYR52rKF6OBI1FkFshQ64GnCtj5eUmwKatbplpN8hS8NZyVgA==}
     dev: false
 
-  /@ai-mask/sdk@0.1.2:
+  /@ai-mask/sdk@0.1.3:
     resolution: {integrity: sha512-pq3CM8/ZirVhDlaPSGvVarXqLXP0H16Rpu8WaYnYbjWIS5F+NGC4EtATKqWQlfQI7LmjUONyUz2k5IKUB63G2A==}
     dependencies:
-      '@ai-mask/core': 0.1.2
+      '@ai-mask/core': 0.1.3
     dev: false
 
   /@alloc/quick-lru@5.2.0:
@@ -1081,7 +1081,7 @@ packages:
       browserslist: 4.23.0
       caniuse-lite: 1.0.30001589
       fraction.js: 4.3.7
-      normalize-range: 0.1.2
+      normalize-range: 0.1.3
       picocolors: 1.0.0
       postcss: 8.4.35
       postcss-value-parser: 4.2.0
@@ -1872,7 +1872,7 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /normalize-range@0.1.2:
+  /normalize-range@0.1.3:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
     dev: true
