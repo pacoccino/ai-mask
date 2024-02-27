@@ -23,12 +23,16 @@ const key = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAooxazoYOiipPPhgI58FzWgy
 
 export default defineManifest(async (env) => {
     let connect_srcs = connect_srcs_prod
+    let permissions = [
+        "storage",
+    ]
     let side_panel: any = undefined
     if (env.mode === 'development') {
         connect_srcs = connect_srcs.concat(connect_srcs_dev)
         side_panel = {
             default_path: "src/side_panel/page.html",
         }
+        permissions.push("sidePanel")
     }
     return {
         manifest_version: 3,
@@ -56,7 +60,6 @@ export default defineManifest(async (env) => {
         },
         permissions: [
             "storage",
-            "sidePanel"
         ],
         externally_connectable: {
             matches: externally_connectable_urls,

@@ -80,8 +80,8 @@ export class AIMaskService {
         if (await database.get('status') === 'infering') throw new Error('already infering')
 
         try {
-            await database.set('status', 'infering')
             const inferer = await this.getInferer(params)
+            await database.set('status', 'infering')
             const response = await inferer.infer(params, streamhandler)
             return response
         } catch (e) {
