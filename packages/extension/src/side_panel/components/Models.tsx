@@ -1,28 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
-import { InternalMessage, InternalMessager } from "../../lib/InternalMessager";
-import { DB_Type, database } from "../../lib/Database";
+import { useCallback } from "react";
+import { InternalMessager } from "../../lib/InternalMessager";
 import ModelRow from "./ModelRow";
-import { models } from "@ai-mask/core"
+import { Model, models } from "@ai-mask/core"
+import { useDb } from "../hooks/db";
+import { useMemo } from "react";
+import { modelStatus } from "../lib/models";
 
 export default function Models() {
-    const [db, setDB] = useState<DB_Type | null>()
-
-    useEffect(() => {
-        const updateModels = () => {
-            database.getAll().then(setDB)
-        }
-        const handler = async (message: InternalMessage) => {
-            if (message.type === 'db_updated')
-                updateModels()
-        }
-        InternalMessager.listen(handler)
-
-        updateModels()
-
-        return () => {
-            InternalMessager.removeListener(handler)
-        }
-    }, [])
+    const db = useDb()
 
     const clearModels = useCallback(() => {
         InternalMessager.send({
@@ -36,7 +21,22 @@ export default function Models() {
         })
     }, [])
 
-    if (!db || !models) {
+    const sortedModels: Model[] = useMemo(() => {
+        const weights: any = {
+            'Loading': 0,
+            'Memory': 1,
+            'Cached': 2,
+            'Uncached': 3,
+        }
+        return db && models.sort((a, b) => {
+            const status_a = modelStatus(a, db)
+            const status_b = modelStatus(b, db)
+
+            return weights[status_a.status] - weights[status_b.status]
+        }) || []
+    }, [models, db])
+
+    if (!db) {
         return (
             <div className="mt-4 text-slate-500 font-semibold text-xl">
                 Loading...
@@ -44,24 +44,25 @@ export default function Models() {
         )
     }
 
-    return (
-        <div className="flex flex-col items-center w-full">
+    const someCached = Object.values(db.cached_models).filter(v => !!v).length > 0
 
-            <div className="flex space-x-2 py-4">
+    return (
+        <div className="flex flex-col items-center w-full h-full">
+            <div className="flex space-x-2 py-4 w-full px-2">
                 <button
                     onClick={clearModels}
-                    className="bg-red-300"
-                    disabled={false && !db?.cached_models.length}
+                    className="flex-1"
+                    disabled={!someCached}
                 >Clear Models Cache</button>
                 <button
                     onClick={unloadModel}
-                    className="bg-yellow-300"
+                    className="flex-1"
                     disabled={!db?.loaded_model}
                 >Unload Model</button>
             </div>
-            <h2 className="mb-2">Available models</h2>
-            <div className="flex flex-col w-full border border-slate-200 divide-y">
-                {models.map(model => (
+            <h2 className="mb-2 text-left">Models</h2>
+            <div className="flex flex-col w-full flex-1 overflow-auto">
+                {sortedModels.map(model => (
                     <ModelRow key={model.id} model={model} db={db} />
                 ))}
             </div>

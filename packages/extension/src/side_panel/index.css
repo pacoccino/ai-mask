@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+    body {
+        @apply bg-green-900 text-white;
+    }
+
     h1 {
         @apply text-2xl font-bold;
     }
@@ -16,16 +20,11 @@
     }
 
     button {
-        @apply p-2 border rounded-lg hover:bg-slate-200 disabled:bg-white;
+        @apply text-center p-2 rounded-lg shadow bg-orange-500 hover:bg-orange-600 active:bg-orange-700 disabled:bg-orange-100 disabled:text-orange-400 text-white;
     }
 
-    th {
-        @apply bg-slate-100;
-    }
-
-    th,
-    td {
-        @apply p-2 border border-slate-300;
+    select {
+        @apply border border-orange-900 p-2 rounded-md;
     }
 }
 

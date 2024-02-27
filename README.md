@@ -125,6 +125,7 @@ pnpm run build
 - [ ] Deploy extension
 - [ ] Match OpenAI SDK API / Provide ReadableStream from AIMasklient
 - [ ] Proxy OpenAI-like API requests and store user keys
+- [ ] Interrupts
 - [ ] Include react Hooks/utilities in SDK
 - [ ] Pull request in one popular AI app
 - [ ] Implement more tasks

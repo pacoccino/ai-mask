@@ -4,7 +4,6 @@ import { InternalMessage, InternalMessager } from "./InternalMessager";
 import { ModelLoadReport, AIMaskInferer } from "./AIMaskInfer";
 
 export class AIMaskService {
-    infering: boolean = false
     messager: ExtensionMessager<AIActions>
     inferer: AIMaskInferer | null = null
 
@@ -24,11 +23,6 @@ export class AIMaskService {
             const modelId = this.inferer.model.id
             database
                 .setProgress(modelId, report.progress)
-                .then(() => {
-                    if (!report.finished) {
-                        return database.setCached(modelId)
-                    }
-                })
                 .catch(console.error)
         }
 
@@ -36,12 +30,12 @@ export class AIMaskService {
             if (this.inferer.model.id === params.modelId) {
                 if (this.inferer.isReady()) return this.inferer
                 else {
+                    await database.set('status', 'loading')
                     await this.inferer.load(progressHandler)
                     return this.inferer
                 }
             } else {
-                this.inferer.unload()
-                this.inferer = null
+                await this.unloadModel()
             }
         }
         const model = await getModel(params.modelId)
@@ -52,7 +46,10 @@ export class AIMaskService {
             throw new Error('incompatible task and model')
         }
         this.inferer = new AIMaskInferer(model)
+        await database.set('status', 'loading')
         await this.inferer.load(progressHandler)
+        await database.set('status', 'loaded')
+        await database.setCached(params.modelId)
         await database.set('loaded_model', model.id)
         return this.inferer
     }
@@ -60,6 +57,7 @@ export class AIMaskService {
     async unloadModel() {
         if (this.inferer) {
             this.inferer.unload()
+            await database.set('status', 'initialied')
             await database.set('loaded_model', undefined)
             await InternalMessager.send({
                 type: 'models_updated',
@@ -79,33 +77,29 @@ export class AIMaskService {
     }
 
     async onInfer(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
-        if (this.infering) throw new Error('already infering')
+        if (await database.get('status') === 'infering') throw new Error('already infering')
 
         try {
-            this.infering = true
+            await database.set('status', 'infering')
             const inferer = await this.getInferer(params)
             const response = await inferer.infer(params, streamhandler)
             return response
         } catch (e) {
             throw e
         } finally {
-            this.infering = false
+            await database.set('status', 'loaded')
         }
     }
 
     async handleInternalMessage(message: InternalMessage) {
         switch (message.type) {
-            case 'get_models':
-                return {
-                    models,
-                    db: await database.getAll(),
-                }
             case 'clear_models_cache':
                 return await this.clearModelsCache()
             case 'unload_model':
                 return await this.unloadModel()
             default:
-                throw new Error('unsupported message type')
+                console.log(message)
+                throw new Error(`unsupported message type ${message.type}`)
         }
     }
 

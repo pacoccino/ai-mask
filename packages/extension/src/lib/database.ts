@@ -3,17 +3,17 @@ import { Model } from "@ai-mask/core";
 import { InternalMessager } from "./InternalMessager";
 
 export interface DB_Type {
-    cached_models: Array<Model['id']>,
-    cache_progress: Array<{ id: Model['id'], progress: number }>,
+    cached_models: { [id: string]: boolean },
+    cache_progress: { [id: string]: number },
     loaded_model: Model['id'] | undefined
-    initialized: true
+    status: 'uninitialized' | 'initialied' | 'loading' | 'loaded' | 'error' | 'infering'
 }
 
 export const INITIAL_DB: DB_Type = {
-    cached_models: [],
-    cache_progress: [],
+    cached_models: {},
+    cache_progress: {},
     loaded_model: undefined,
-    initialized: true,
+    status: 'uninitialized',
 }
 
 type DB_Type_Keys = keyof DB_Type
@@ -34,13 +34,14 @@ class Database {
     }
 
     async init(reset = false) {
-        const initialized = await this.get('initialized')
-        if (!reset && !!initialized) {
-            return
+        const initialized = await this.get('status')
+        if (reset || initialized !== 'initialied') {
+            for (const key in INITIAL_DB) {
+                await this.set(key as DB_Type_Keys, INITIAL_DB[key as DB_Type_Keys] as DB_Type_Value)
+            }
         }
-        for (const key in INITIAL_DB) {
-            await this.set(key as DB_Type_Keys, INITIAL_DB[key as DB_Type_Keys] as DB_Type_Value)
-        }
+        this.set('status', 'initialied')
+        this.set('loaded_model', undefined)
     }
 
     async set(key: DB_Type_Keys, value: DB_Type_Value): Promise<void> {
@@ -62,27 +63,14 @@ class Database {
     }
 
     async setProgress(id: Model['id'], progress: number) {
-        const load_progress = await this.get('cache_progress')
-        const index = load_progress.findIndex(item => item.id === id)
-        if (index === -1) {
-            load_progress.push({ id, progress })
-        } else {
-            load_progress[index].progress = progress
-        }
-        await this.set('cache_progress', load_progress)
+        const cache_progress = await this.get('cache_progress')
+        cache_progress[id] = progress
+        await this.set('cache_progress', cache_progress)
     }
 
     async setCached(id: Model['id'], cached: boolean = true) {
         let cached_models = await this.get('cached_models')
-
-        if (cached) {
-            const model = cached_models.find(item => item === id)
-            if (!model) {
-                cached_models.push(id)
-            }
-        } else {
-            cached_models = cached_models.filter(m => m !== id)
-        }
+        cached_models[id] = cached
         await this.set('cached_models', cached_models)
     }
 }

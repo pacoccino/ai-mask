@@ -83,6 +83,7 @@ export default function Translate() {
                 <button
                     className='border rounded-md p-2 mt-2'
                     onClick={generate}
+                    disabled={!inputText}
                 >Translate</button>
             </div>
         </div>

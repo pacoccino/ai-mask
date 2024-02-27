@@ -31,8 +31,8 @@ export default function Models({ task }: { task: Model['task'] }) {
     <div className="">
       <h2 className='mb-2'>Model</h2>
       <select
-        className=''
         value={selectedModel?.id}
+        className='w-32'
         onChange={changeModel}
       >
         {taskModels.map(model => (

@@ -1,46 +1,63 @@
-import { Model } from "@ai-mask/core";
+import { Model, config } from "@ai-mask/core";
 import { DB_Type } from "../../lib/Database";
+import clsx from "clsx";
+import { modelStatus } from "../lib/models";
+
+const status_colors = {
+    'Memory': 'bg-blue-400',
+    'Loading': 'bg-yellow-400',
+    'Cached': 'bg-orange-400',
+    'Uncached': 'bg-orange-50',
+}
+
+const task_colors = {
+    'chat': 'bg-orange-400',
+    'completion': 'bg-orange-400',
+    'translation': 'bg-blue-400',
+}
+
+const vrams: any = config.mlc.appConfig.model_list.reduce((acc: any, item) => {
+    acc[item.local_id] = Math.round(item.vram_required_MB / 100) / 10
+    return acc as any
+})
 
 export default function ModelRow({ model, db }: { model: Model, db: DB_Type }) {
-    const progress = db?.cache_progress.find(c => c.id == model.id)?.progress
-    const cached = !!db?.cached_models.find(c => c == model.id)
-    const inMemory = db?.loaded_model === model.id
-    return (
-        <div key={model.id} className="px-4 py-2">
-            <p className="text-base text-center">{model.name}</p>
-            <p className="text-small text-slate-500 text-center italic">{model.id}</p>
+    const {
+        progress,
+        loading,
+        status,
+    } = modelStatus(model, db)
 
-            {(progress !== undefined && progress !== 100) &&
-                <div className="relative w-full h-6 bg-white border border-bg-green-400 my-1 rounded-full overflow-hidden">
-                    <div className="bg-green-300 h-full" style={{ width: `${progress || 0}%` }} />
-                    <div className="absolute top-0 left-0 right-0 text-center pt-0.5">Loading: {progress || 0}%</div>
+    return (
+        <div key={model.id} className="">
+            <div className="bg-green-700 py-2">
+                <p className="text-base text-left px-4">{model.name}</p>
+            </div>
+            {loading &&
+                <div className="w-full h-2 bg-white overflow-hidden">
+                    <div className="bg-green-400 h-full" style={{ width: `${progress || 0}%` }} />
                 </div>
             }
 
-            <div className="flex flex-wrap space-x-4 my-2">
-                <div>
-                    <h3 className="text-slate-600">Engine</h3>
-                    <p>{model.engine}</p>
+            <div className="w-full flex justify-stretch bg-black">
+                <div className={clsx("flex flex-col w-20 items-center p-2", status_colors[status])} >
+                    <h4 className="text-orange-950">Status</h4>
+                    <p className="text-orange-900">{status}</p>
                 </div>
-                <div>
-                    <h3 className="text-slate-600">Task</h3>
-                    <div>{model.task}</div>
+                <div className="flex flex-col w-16 items-center p-2 bg-orange-300">
+                    <h4 className="text-orange-950">VRAM</h4>
+                    <p className="text-orange-900">{vrams[model.id] || '?'} GB</p>
+                </div>
+                <div className={clsx("flex flex-col w-24 items-center p-2 bg-green-300", task_colors[model.task])}>
+                    <h4 className="text-orange-950">Task</h4>
+                    <p className="text-orange-900">{model.task}</p>
+                </div>
+                <div className={clsx("flex flex-col flex-1 items-center p-2 bg-green-100")}>
+                    <h4 className="text-orange-950">Engine</h4>
+                    <p className="text-orange-900">{model.engine}</p>
                 </div>
             </div>
 
-            <div className="flex flex-wrap space-x-2">
-                {cached &&
-                    <div className="badge bg-green-400">
-                        Cached
-                    </div>
-                }
-                {inMemory &&
-                    <div className="badge bg-blue-400">
-                        In memory
-                    </div>
-                }
-            </div>
-
-        </div>
+        </div >
     )
 }
