@@ -1,5 +1,11 @@
 # @ai-mask/sdk
 
+## 0.2.1
+
+### Patch Changes
+
+- 4c79337: test publish
+
 ## 0.2.0
 
 ### Minor Changes
