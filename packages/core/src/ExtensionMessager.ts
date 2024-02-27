@@ -1,4 +1,4 @@
-const EXTENSION_ID = "npgbhebmpolpcblmonkddamngjcmppnd";
+import { config } from './config'
 
 type WebMessageBase = {
     messageId: string
@@ -85,7 +85,7 @@ export class ExtensionMessagerClient<T extends MessageRequest> {
 
     private listen(name: string) {
         this.port = chrome.runtime.connect(
-            EXTENSION_ID,
+            config.EXTENSION_ID,
             {
                 name,
             }
