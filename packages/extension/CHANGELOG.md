@@ -1,5 +1,17 @@
 # @ai-mask/chrome-extension
 
+## 0.3.0
+
+### Minor Changes
+
+- 91647cc: popup
+- 4cfdb49: add AIMaskClient.isExtensionAvailable
+
+### Patch Changes
+
+- Updated dependencies [91647cc]
+  - @ai-mask/core@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes

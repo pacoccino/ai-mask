@@ -1,5 +1,17 @@
 # @ai-mask/demo-app
 
+## 0.3.0
+
+### Minor Changes
+
+- 91647cc: popup
+
+### Patch Changes
+
+- Updated dependencies [91647cc]
+- Updated dependencies [4cfdb49]
+  - @ai-mask/sdk@0.3.0
+
 ## 0.2.1
 
 ### Patch Changes
