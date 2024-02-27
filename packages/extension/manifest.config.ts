@@ -22,8 +22,12 @@ const externally_connectable_urls = [
 
 export default defineManifest(async (env) => {
     let connect_srcs = connect_srcs_prod
+    let side_panel: any = undefined
     if (env.mode === 'development') {
         connect_srcs = connect_srcs.concat(connect_srcs_dev)
+        side_panel = {
+            default_path: "src/side_panel/page.html",
+        }
     }
     return {
         manifest_version: 3,
@@ -40,11 +44,10 @@ export default defineManifest(async (env) => {
             extension_pages: `script-src 'self' 'wasm-unsafe-eval'; default-src 'self' data:; connect-src 'self' data: ${connect_srcs.join(' ')};`
         },
         action: {
-            default_title: "Click to open panel"
+            default_title: "Click to open panel",
+            default_popup: "src/side_panel/page.html",
         },
-        side_panel: {
-            default_path: "src/side_panel/page.html"
-        },
+        side_panel,
         background: {
             service_worker: "src/background/main.ts",
             type: "module"

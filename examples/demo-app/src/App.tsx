@@ -27,7 +27,7 @@ export default function App() {
         </div>
         <Models task={task} />
       </div>
-      <div className='flex-1 w-full overflow-auto flex flex-col'>
+      <div className='flex-1 w-full overflow-auto flex flex-col items-center'>
         {clientState === 'loaded' && aiMaskClient &&
           <>
             {task === 'chat' && <Chat />}

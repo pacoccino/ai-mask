@@ -24,7 +24,7 @@ export default function App() {
     const status = db?.status || 'uninitialized'
 
     return (
-        <div className="flex flex-col items-center h-screen">
+        <div className={clsx("flex flex-col items-center", import.meta.env.DEV ? 'w-screen h-screen' : 'w-[350px] h-[500px]')} >
             <div className="flex space-x-2 py-4">
                 <img src="../../icons/icon-128.png" alt="AI-Mask Logo" className="w-8 h-8" />
                 <h1>AI-Mask</h1>

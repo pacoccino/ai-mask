@@ -52,7 +52,7 @@ export default function Translate() {
     }
 
     return (
-        <div className="flex flex-col items-center w-full">
+        <div className="flex flex-col items-center max-w-screen-md w-full">
             <div className="flex flex-col md:flex-row w-full space-y-2 md:space-y-0 md:space-x-2">
                 <div className='w-full md:w-1/2'>
                     <LanguageSelector

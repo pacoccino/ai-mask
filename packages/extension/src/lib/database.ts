@@ -30,7 +30,6 @@ class Database {
                 localforage.LOCALSTORAGE
             ],
         });
-        this.init()
     }
 
     async init(reset = false) {
