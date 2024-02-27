@@ -19,6 +19,8 @@ See it as the [Metamask](https://metamask.io/) of AI.
 
 [Try it !](https://pacoccino.github.io/ai-mask/)
 
+[AIMask demo.webm](https://github.com/pacoccino/ai-mask/assets/1371207/e65fd9d0-3773-4a98-a9ba-0a31acacb4e3)
+
 ## Why ?
 
 On-device AI inference is getting quite a traction recently. Most of our devices are already capable of executing machine learning models and software compatibility is ready.
