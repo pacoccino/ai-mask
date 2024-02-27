@@ -13,7 +13,7 @@
         "dist"
     ],
     "scripts": {
-        "dev": "pnpm run build --watch",
+        "dev": "pnpm build --watch",
         "build": "tsup ./src/index.ts --format esm,cjs --dts",
         "clean": "rimraf ./dist"
     },

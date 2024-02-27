@@ -35,14 +35,24 @@ export default function App() {
             <div className="flex-1 w-full overflow-auto">
                 <Models />
             </div>
-            <a
-                href="https://github.com/pacoccino/ai-mask"
-                target="_blank"
-                rel="noreferrer"
-                className="underline my-2"
-            >
-                Source code
-            </a>
+            <div className="flex justify-center divide-x my-2">
+                <a
+                    href="https://github.com/pacoccino/ai-mask?tab=readme-ov-file#supported-apps"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline px-1"
+                >
+                    Supported apps
+                </a>
+                <a
+                    href="https://github.com/pacoccino/ai-mask"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline px-1"
+                >
+                    Source code
+                </a>
+            </div>
         </div >
     )
 }

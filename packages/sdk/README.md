@@ -46,8 +46,14 @@ const response = await aiMaskClient.chat(
 ```typescript
 import { AIMaskClient } from '@ai-mask/sdk'
 
+// Check if extension is installed
+AIMaskClient.isExtensionAvailable(): boolean
+
+// Instanciate
+const aiMaskClient = new AIMaskClient({ name?: string }) // name of your app
+
 // List available models
-async AIMaskClient.getModels(): Promise<Model[]>
+async aiMaskClient.getModels(): Promise<Model[]>
 
 type Model {
     id: string
@@ -56,7 +62,7 @@ type Model {
 }
 
 // Chat with an OpenAI-like request
-async AIMaskClient.chat(modelId: string, params: ChatCompletionParams, streamCallback?: MessagerStreamHandler): Promise<string>
+async aiMaskClient.chat(modelId: string, params: ChatCompletionParams, streamCallback?: MessagerStreamHandler): Promise<string>
 
 type ChatCompletionParams = {
     messages: [{ role: 'user' | 'assistant', content: string }]
@@ -66,15 +72,13 @@ type ChatCompletionParams = {
 type MessagerStreamHandler = (new_text: string) => void
 
 // Translate text from one language to another
-async AIMaskClient.translate(modelId: string, params: TranslationParams, streamCallback?: MessagerStreamHandler): Promise<string>
-
+async aiMaskClient.translate(modelId: string, params: TranslationParams, streamCallback?: MessagerStreamHandler): Promise<string>
 
 type TranslationParams = {
     inputText: string
     sourceLang: string
     destLang: string
 }
-
 ```
 
 For `sourceLang` and `destLang`, see [languages](/packages/core/src/config/translation.ts)

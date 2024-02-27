@@ -6,14 +6,14 @@
         "url": "git+https://github.com/pacoccino/ai-mask"
     },
     "scripts": {
-        "build": "pnpm run -r --filter=!./forks/* build",
-        "build-sdk": "pnpm run -r --filter=@ai-mask/sdk... build",
-        "build-page": "pnpm run -r --filter=@ai-mask/demo-app... build",
-        "build-extension": "pnpm run -r --filter=@ai-mask/chrome-extension... build",
-        "publish-sdk": "pnpm run build-sdk && pnpm publish --filter=@ai-mask/sdk... --access public",
-        "clean": "pnpm run -r clean",
-        "lint": "pnpm run -r --filter=!./forks/* lint",
-        "dev": "pnpm run --parallel --filter=!./forks/* dev"
+        "build": "pnpm -r --filter=!./forks/* build",
+        "build-sdk": "pnpm -r --filter=@ai-mask/sdk... build",
+        "build-page": "pnpm -r --filter=@ai-mask/demo-app... build",
+        "build-extension": "pnpm -r --filter=@ai-mask/chrome-extension... build",
+        "publish-sdk": "pnpm build-sdk && pnpm publish --filter=@ai-mask/sdk... --access public",
+        "clean": "pnpm -r clean",
+        "lint": "pnpm -r --filter=!./forks/* lint",
+        "dev": "pnpm --parallel --filter=!./forks/* dev"
     },
     "engines": {
         "node": ">=18",

@@ -7,6 +7,15 @@ export class AIMaskClient {
         this.messager = new ExtensionMessagerClient<AIActions>({ name: params?.name || 'ai-mask-app' })
     }
 
+    static isExtensionAvailable() {
+        try {
+            new ExtensionMessagerClient<AIActions>({ name: 'check-extension' })
+            return true
+        } catch {
+            return false
+        }
+
+    }
     dispose() {
         this.messager.dispose()
     }

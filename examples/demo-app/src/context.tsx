@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 interface AIMaskContextType {
     aiMaskClient: AIMaskClient | null
-    clientState: 'loading' | 'loaded' | 'error'
+    clientState: 'loading' | 'loaded' | 'error' | 'not-available'
     selectedModel: Model | undefined
     setSelectedModel: (_: Model) => void
 }
@@ -24,15 +24,13 @@ export function AIMaskProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (aiMaskClient.current) return
-        try {
-            aiMaskClient.current = new AIMaskClient({ name: 'ai-mask-demo-app' })
-            setClientState('loaded')
-        } catch (error) {
-            const message = (error instanceof Error) ? error.message : String(error)
-            console.error('failed to connect', message)
-            aiMaskClient.current = null
-            setClientState('error')
+        if (AIMaskClient.isExtensionAvailable() === false) {
+            console.error('extension not available')
+            setClientState('not-available')
+            return
         }
+        aiMaskClient.current = new AIMaskClient({ name: 'ai-mask-demo-app' })
+        setClientState('loaded')
 
         return () => {
             aiMaskClient.current?.dispose()

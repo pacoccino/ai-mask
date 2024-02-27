@@ -79,7 +79,7 @@ importers:
   forks/chatbot-ui:
     dependencies:
       '@ai-mask/sdk':
-        specifier: workspace:^
+        specifier: ^0.2.1
         version: link:../../packages/sdk
       '@anthropic-ai/sdk':
         specifier: ^0.12.8

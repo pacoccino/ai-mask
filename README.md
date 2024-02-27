@@ -9,13 +9,15 @@
 [![npm version](https://badge.fury.io/js/@ai-mask%2Fsdk.svg)](https://badge.fury.io/js/@ai-mask%2Fsdk)
 
 > This is an experimental project at an MVP stage. 
-> **Feedback will be greatly appreciated for the future of this project.**
+> **[Feedback](https://github.com/pacoccino/ai-mask/discussions) will be greatly appreciated for the future of this project.**
  
 ## What ?
 
 AI-Mask is a chrome **web extension** that serves as a gateway to  **AI** models execution. It runs model **on-device** for apps which needs it, for **free**, and with full-**privacy**. 
 
 See it as the [Metamask](https://metamask.io/) of AI. 
+
+[Try it !](https://pacoccino.github.io/ai-mask/)
 
 ## Why ?
 
@@ -37,6 +39,13 @@ This would solve:
 - Users won't have to share API keys with non-trusted apps anymore
 - Users won't share private data with apps
 - App developers won't need to have a backend server which proxies API request to alleviate cors problem and manipulate responses
+
+## Supported Apps
+
+Web apps that are compatible with this extension for local inference:
+ 
+- [Demo App](https://pacoccino.github.io/ai-mask/)
+- [chatbot-ui](https://github.com/pacoccino/chatbot-ui/pull/1)
 
 ## Usage
 
@@ -92,14 +101,6 @@ AI-Mask is a ManifestV3 extension, heavily relying on the work of third party li
 - [web-llm](https://github.com/mlc-ai/web-llm) Inference with WASM/WebGPU via Apache TVM
 -  [transformers.js](https://github.com/mlc-ai/web-llm) Inference with WASM via ONNX Runtime
   
-
-## Supported Apps
-
-All the web apps that are compatible with this extension:
- 
-- [Demo App](https://pacoccino.github.io/ai-mask/)
-- [chatbot-ui](https://github.com/pacoccino/chatbot-ui/pull/1)
-
 ## Contribute
 
 ### Developpement
@@ -111,11 +112,11 @@ Requirements:
 
 #### Start development server for all packages (sdk/extension/demo-app)
 ```
-pnpm run dev
+pnpm dev
 ```
 #### Typecheck and build for production
 ```
-pnpm run build
+pnpm build
 ```
 
 ## Roadmap
