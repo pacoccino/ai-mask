@@ -6,6 +6,8 @@
 
 [Download extension](#) | [Supported apps](#supported-apps) | [Integration guide](#for-integrators)
 
+[![npm version](https://badge.fury.io/js/@ai-mask%2Fsdk.svg)](https://badge.fury.io/js/@ai-mask%2Fsdk)
+
 > This is an experimental project at an MVP stage. 
 > **Feedback will be greatly appreciated for the future of this project.**
  
@@ -19,11 +21,11 @@ See it as the [Metamask](https://metamask.io/) of AI.
 
 On-device AI inference is getting quite a traction recently. Most of our devices are already capable of executing machine learning models and software compatibility is ready.
 
-Thanks to some [amazing](https://github.com/mlc-ai/web-llm) [libraries](https://github.com/xenova/transformers.js), running machine learning models in the browser has become ridiculously easy, accelerated with WASM and WebGPU. This means they'll work and run at full-performance on virtually any device, hardware and operating system.
+Thanks to some [amazing](https://github.com/mlc-ai/web-llm) [libraries](https://github.com/xenova/transformers.js), running **machine learning** models **in the browser** has become ridiculously easy, accelerated with **WASM** and **WebGPU**. This means they'll work and run nearly at **full-performance** on virtually **any device**, hardware and operating system.
 
-But SOTA web inference libraries store models in the browser cache, which is per-domain. This means that if multiple web apps use the same models, it needs to be downloaded once per domain, which can use a lot of disk space.
+**But** SOTA web inference libraries store models in the browser cache, which is per-domain. This means that if multiple web apps use the same models, it needs to be downloaded once per domain, which can use a **lot of disk space**.
 
-With this extension, the models are cached only once and served to the websites conveniently though an unified SDK.
+With this extension, the models are **cached only once** and served to the websites conveniently though an **unified SDK**.
 
 ## Future
 

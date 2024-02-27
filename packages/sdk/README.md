@@ -4,6 +4,8 @@
 
 [Download extension](#) | [Demo App](https://pacoccino.github.io/ai-mask/) | [Home Page](https://github.com/pacoccino/ai-mask/blob/main/packages/extension/icons/icon-128.png) | [Quick Start](#quick-start)
 
+[![npm version](https://badge.fury.io/js/@ai-mask%2Fsdk.svg)](https://badge.fury.io/js/@ai-mask%2Fsdk)
+
 > This is an alpha version
 
 Easily support AI-Mask in your AI apps, and bring free and private local-inference to your users ! Do not store API keys again, and get rid of your backend and server costs. 
