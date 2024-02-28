@@ -19,7 +19,7 @@ const externally_connectable_urls = [
     "<all_urls>",
 ]
 let permissions: chrome.runtime.ManifestPermissions[] = [
-    //"storage",
+    "storage",
 ]
 let side_panel: chrome.sidePanel.SidePanel | undefined = undefined
 

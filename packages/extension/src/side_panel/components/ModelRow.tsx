@@ -1,5 +1,5 @@
 import { Model, config } from "@ai-mask/core";
-import { DB_Type } from "../../lib/Database";
+import { State_Type } from "../../lib/State";
 import clsx from "clsx";
 import { modelStatus } from "../lib/models";
 
@@ -21,12 +21,12 @@ const vrams: any = config.mlc.appConfig.model_list.reduce((acc: any, item) => {
     return acc as any
 })
 
-export default function ModelRow({ model, db }: { model: Model, db: DB_Type }) {
+export default function ModelRow({ model, extensionState }: { model: Model, extensionState: State_Type }) {
     const {
         progress,
         loading,
         status,
-    } = modelStatus(model, db)
+    } = modelStatus(model, extensionState)
 
     return (
         <div key={model.id} className="">

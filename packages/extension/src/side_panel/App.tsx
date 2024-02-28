@@ -1,5 +1,5 @@
 import Models from "./components/Models";
-import { useDb } from "./hooks/db";
+import { useExtensionState } from "./hooks/state";
 import clsx from 'clsx'
 
 const state_colors = {
@@ -20,8 +20,8 @@ const state_text = {
 }
 
 export default function App() {
-    const db = useDb()
-    const status = db?.status || 'uninitialized'
+    const extensionState = useExtensionState()
+    const status = extensionState?.status || 'uninitialized'
 
     return (
         <div className={clsx("flex flex-col items-center", import.meta.env.DEV ? 'w-screen h-screen' : 'w-[350px] h-[500px]')} >

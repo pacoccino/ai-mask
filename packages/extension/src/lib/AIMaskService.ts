@@ -1,5 +1,5 @@
 import { ExtensionMessager, MessagerStreamHandler, AIActions, AIActionParams, getModel, models } from "@ai-mask/core";
-import { database } from "./Database";
+import { extensionState } from "./State";
 import { InternalMessage, InternalMessager } from "./InternalMessager";
 import { ModelLoadReport, AIMaskInferer } from "./AIMaskInfer";
 
@@ -14,14 +14,14 @@ export class AIMaskService {
         // @ts-ignore
         this.messager = new ExtensionMessager<AIActions>(this.handleAppMessage.bind(this))
         InternalMessager.listen(this.handleInternalMessage.bind(this))
-        database.init().catch(console.error)
+        extensionState.init().catch(console.error)
     }
 
     async getInferer(params: AIActionParams<'infer'>): Promise<AIMaskInferer> {
         const progressHandler = (report: ModelLoadReport) => {
             if (!this.inferer) return
             const modelId = this.inferer.model.id
-            database
+            extensionState
                 .setProgress(modelId, report.progress)
                 .catch(console.error)
         }
@@ -30,7 +30,7 @@ export class AIMaskService {
             if (this.inferer.model.id === params.modelId) {
                 if (this.inferer.isReady()) return this.inferer
                 else {
-                    await database.set('status', 'loading')
+                    await extensionState.set('status', 'loading')
                     await this.inferer.load(progressHandler)
                     return this.inferer
                 }
@@ -45,20 +45,21 @@ export class AIMaskService {
         if (model.task !== params.task) {
             throw new Error('incompatible task and model')
         }
+
+        await extensionState.set('status', 'loading')
         this.inferer = new AIMaskInferer(model)
-        await database.set('status', 'loading')
         await this.inferer.load(progressHandler)
-        await database.set('status', 'loaded')
-        await database.setCached(params.modelId)
-        await database.set('loaded_model', model.id)
+        await extensionState.setCached(params.modelId)
+        await extensionState.set('status', 'loaded')
+        await extensionState.set('loaded_model', model.id)
         return this.inferer
     }
 
     async unloadModel() {
         if (this.inferer) {
             this.inferer.unload()
-            await database.set('status', 'initialied')
-            await database.set('loaded_model', undefined)
+            await extensionState.set('status', 'initialied')
+            await extensionState.set('loaded_model', undefined)
             await InternalMessager.send({
                 type: 'models_updated',
             }, true)
@@ -73,26 +74,28 @@ export class AIMaskService {
                 caches.delete(cacheKey)
             })
         })
-        await database.init(true)
+        await extensionState.init(true)
     }
 
     async onInfer(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
-        if (await database.get('status') === 'infering') throw new Error('already infering')
+        if (await extensionState.get('status') === 'infering') throw new Error('already infering')
 
         try {
             const inferer = await this.getInferer(params)
-            await database.set('status', 'infering')
+            await extensionState.set('status', 'infering')
             const response = await inferer.infer(params, streamhandler)
+            await extensionState.set('status', 'loaded')
             return response
         } catch (e) {
+            await extensionState.set('status', 'error')
             throw e
-        } finally {
-            await database.set('status', 'loaded')
         }
     }
 
     async handleInternalMessage(message: InternalMessage) {
         switch (message.type) {
+            case 'get_state':
+                return await extensionState.getAll()
             case 'clear_models_cache':
                 return await this.clearModelsCache()
             case 'unload_model':

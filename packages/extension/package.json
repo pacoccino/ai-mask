@@ -1,6 +1,6 @@
 {
   "name": "@ai-mask/chrome-extension",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "",
   "type": "module",
   "scripts": {
@@ -34,7 +34,6 @@
     "@ai-mask/core": "workspace:^",
     "@xenova/transformers": "^2.15.1",
     "clsx": "^2.1.0",
-    "localforage": "^1.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }

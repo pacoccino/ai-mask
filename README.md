@@ -138,6 +138,3 @@ pnpm build
 - [ ] Implement more tasks
 - [ ] Add more models
 - [ ] Unload model from memory after being inactive for a while
-- [ ] Improve extension panel:
-    - [ ] search/filter models
-    - [ ] download/remove individual models

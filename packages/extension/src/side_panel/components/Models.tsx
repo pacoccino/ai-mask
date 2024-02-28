@@ -2,12 +2,12 @@ import { useCallback } from "react";
 import { InternalMessager } from "../../lib/InternalMessager";
 import ModelRow from "./ModelRow";
 import { Model, models } from "@ai-mask/core"
-import { useDb } from "../hooks/db";
+import { useExtensionState } from "../hooks/state";
 import { useMemo } from "react";
 import { modelStatus } from "../lib/models";
 
 export default function Models() {
-    const db = useDb()
+    const extensionState = useExtensionState()
 
     const clearModels = useCallback(() => {
         InternalMessager.send({
@@ -28,15 +28,15 @@ export default function Models() {
             'Cached': 2,
             'Uncached': 3,
         }
-        return db && models.sort((a, b) => {
-            const status_a = modelStatus(a, db)
-            const status_b = modelStatus(b, db)
+        return extensionState && models.sort((a, b) => {
+            const status_a = modelStatus(a, extensionState)
+            const status_b = modelStatus(b, extensionState)
 
             return weights[status_a.status] - weights[status_b.status]
         }) || []
-    }, [models, db])
+    }, [models, extensionState])
 
-    if (!db) {
+    if (!extensionState) {
         return (
             <div className="mt-4 text-slate-500 font-semibold text-xl">
                 Loading...
@@ -44,7 +44,9 @@ export default function Models() {
         )
     }
 
-    const someCached = Object.values(db.cached_models).filter(v => !!v).length > 0
+    const someCached = Object.values(extensionState.cached_models).filter(v => !!v).length > 0
+
+    let cache_size = extensionState.cache_size > 1 * 10 ** 9 ? `${Math.round(extensionState.cache_size / 10 ** 9)} GB` : `${Math.round(extensionState.cache_size / 10 ** 6)} MB`
 
     return (
         <div className="flex flex-col items-center w-full h-full">
@@ -57,13 +59,20 @@ export default function Models() {
                 <button
                     onClick={unloadModel}
                     className="flex-1"
-                    disabled={!db?.loaded_model}
+                    disabled={!extensionState?.loaded_model}
                 >Unload Model</button>
             </div>
-            <h2 className="mb-2 text-left">Models</h2>
+
+            <div className="flex bg-green-300 text-black w-full">
+                <h2 className="flex items-center flex-1 px-4 bg-white">Models</h2>
+                <div className="flex flex-col w-20 items-center p-1 bg-orange-950">
+                    <h4 className="text-orange-50">Cache size</h4>
+                    <p className="text-orange-100">{cache_size}</p>
+                </div>
+            </div>
             <div className="flex flex-col w-full flex-1 overflow-auto">
                 {sortedModels.map(model => (
-                    <ModelRow key={model.id} model={model} db={db} />
+                    <ModelRow key={model.id} model={model} extensionState={extensionState} />
                 ))}
             </div>
         </div>

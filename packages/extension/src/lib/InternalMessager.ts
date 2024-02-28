@@ -1,10 +1,10 @@
 export type InternalMessage = {
     type: string
-    data: any
+    data?: any
 }
 
 export class InternalMessager {
-    static async send(message: any, broadcast?: true): Promise<any> {
+    static async send(message: InternalMessage, broadcast?: true): Promise<any> {
         // console.log('[InternalMessager] send', message, broadcast)
         try {
             const response = await chrome.runtime.sendMessage(message)
