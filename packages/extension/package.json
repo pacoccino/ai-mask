@@ -1,11 +1,12 @@
 {
   "name": "@ai-mask/chrome-extension",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "",
   "type": "module",
   "scripts": {
     "dev": "vite --port 3001",
     "build": "tsc && vite build",
+    "package": "zip -r dist.zip dist",
     "clean": "rimraf dist"
   },
   "author": "",

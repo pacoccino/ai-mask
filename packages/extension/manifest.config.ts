@@ -2,7 +2,7 @@ import { defineManifest } from '@crxjs/vite-plugin'
 import packageJson from './package.json'
 const { version } = packageJson
 
-const connect_srcs_prod = [
+let connect_srcs = [
     'https://huggingface.co',
     'https://cdn-lfs.huggingface.co',
     'https://cdn-lfs-us-1.huggingface.co',
@@ -18,15 +18,14 @@ const connect_srcs_dev = [
 const externally_connectable_urls = [
     "<all_urls>",
 ]
+let permissions: chrome.runtime.ManifestPermissions[] = [
+    //"storage",
+]
+let side_panel: chrome.sidePanel.SidePanel | undefined = undefined
 
 const key = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAooxazoYOiipPPhgI58FzWgygGmgRrxCxYPbi4p4FPEarIQaE98hsWI53k5J1+B+qhnkCSTEYDSBYINXgeadoC7bLh1rH5jZaUyJ+Teohx+WS3kBY9kNAteVdXv0QlBbK1I1RBp8WlPBAdoenMveaOXRb5Ipr7dvQzo9ju6NAS+cllY7pObZXhjLX1T4oDzvIn7LYQcaMT+2gd6qUSjTlF6Tkcib/VedZNv3R/DHqs7ej0qYhz++Ty1bOGrMnjJfB+kaHbwte9TGCOVcwWeIIqp2sz6P2IM30f2Vb96M1RByEZI65cZN9aVKmZGcM3BWJc6UPxI53t0yf5iumgABp4QIDAQAB'
 
 export default defineManifest(async (env) => {
-    let connect_srcs = connect_srcs_prod
-    let permissions = [
-        "storage",
-    ]
-    let side_panel: any = undefined
     if (env.mode === 'development') {
         connect_srcs = connect_srcs.concat(connect_srcs_dev)
         side_panel = {
@@ -58,9 +57,7 @@ export default defineManifest(async (env) => {
             service_worker: "src/background/main.ts",
             type: "module"
         },
-        permissions: [
-            "storage",
-        ],
+        permissions,
         externally_connectable: {
             matches: externally_connectable_urls,
         }
