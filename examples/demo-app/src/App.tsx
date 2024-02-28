@@ -38,12 +38,9 @@ export default function App() {
             {task === 'translation' && <Translate />}
           </>
         }
-        {clientState === 'error' &&
-          <div className='text-red-500'>failed to connect, have you installed the extension ?</div>
-        }
         {clientState === 'not-available' &&
           <div className='bg-orange-100 border border-orange-400 rounded-md p-4'>
-            <p>😟 AI-Mask extension not found, have you <a href="#" target='_blank' className='underline'>installed it</a> ?</p>
+            <p>😟 AI-Mask extension not found, have you <a href="https://chromewebstore.google.com/detail/lkfaajachdpegnlpikpdajccldcgfdde" target='_blank' className='underline'>installed it</a> ?</p>
           </div>
         }
         {clientState === 'loading' &&

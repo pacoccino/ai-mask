@@ -2,7 +2,7 @@
 
 **Bring local inference into your app !**
 
-[Download extension](#) | [Demo App](https://pacoccino.github.io/ai-mask/) | [Home Page](https://github.com/pacoccino/ai-mask/blob/main/packages/extension/icons/icon-128.png) | [Quick Start](#quick-start)
+[Download extension](https://chromewebstore.google.com/detail/lkfaajachdpegnlpikpdajccldcgfdde) | [Demo App](https://pacoccino.github.io/ai-mask/) | [Home Page](https://github.com/pacoccino/ai-mask/blob/main/packages/extension/icons/icon-128.png) | [Quick Start](#quick-start)
 
 [![npm version](https://badge.fury.io/js/@ai-mask%2Fsdk.svg)](https://badge.fury.io/js/@ai-mask%2Fsdk)
 
