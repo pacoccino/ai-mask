@@ -1,6 +1,6 @@
 {
     "name": "@ai-mask/core",
-    "version": "0.4.1",
+    "version": "0.5.0",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/pacoccino/ai-mask"

@@ -1,5 +1,16 @@
 # @ai-mask/demo-app
 
+## 0.6.0
+
+### Minor Changes
+
+- move engine to offscreen
+
+### Patch Changes
+
+- Updated dependencies
+  - @ai-mask/sdk@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes
