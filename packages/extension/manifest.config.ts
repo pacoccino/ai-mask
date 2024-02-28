@@ -21,7 +21,7 @@ const externally_connectable_urls = [
     "<all_urls>",
 ]
 let permissions: chrome.runtime.ManifestPermissions[] = [
-    "storage",
+    //"storage",
     "offscreen",
 ]
 let side_panel: chrome.sidePanel.SidePanel | undefined = undefined
@@ -38,14 +38,15 @@ export default defineManifest(async (env) => {
     if (env.mode === 'development') {
         connect_srcs = connect_srcs.concat(connect_srcs_dev)
 
-        if (env_vars.VITE_ENABLE_SIDE_PANEL) {
-            side_panel = {
-                default_path: "src/side_panel/page.html",
-            }
-            permissions.push("sidePanel")
-        } else {
-            action.default_popup = "src/side_panel/page.html"
+    }
+
+    if (env_vars.VITE_ENABLE_SIDE_PANEL) {
+        side_panel = {
+            default_path: "src/side_panel/page.html",
         }
+        permissions.push("sidePanel")
+    } else {
+        action.default_popup = "src/side_panel/page.html"
     }
 
     return {

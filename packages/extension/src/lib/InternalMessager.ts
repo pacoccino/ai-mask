@@ -1,1 +1,1 @@
-export * from './InternalMessagerWeb'
+export * from './InternalMessagerExt'

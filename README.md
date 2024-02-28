@@ -106,7 +106,13 @@ AI-Mask is a ManifestV3 extension, heavily relying on the work of third party li
   
 - [web-llm](https://github.com/mlc-ai/web-llm) Inference with WASM/WebGPU via Apache TVM
 -  [transformers.js](https://github.com/mlc-ai/web-llm) Inference with WASM via ONNX Runtime
-  
+
+Issues with service workers:
+- [WebGPU is not exposed to service workers](https://github.com/gpuweb/gpuweb/issues/4197) 
+- For [some reasons](https://github.com/xenova/transformers.js/pull/462), transformers.js can only run monothreaded in service workers
+
+To solve these issues, the engines runs in an offscreen document
+
 ## Contribute
 
 ### Developpement

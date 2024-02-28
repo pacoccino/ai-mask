@@ -2,7 +2,7 @@ import { createContext } from "react"
 import { State_Type } from "../../lib/State"
 import { useEffect } from "react"
 import { useState } from "react"
-import { InternalMessage, InternalMessager } from "../../lib/InternalMessagerWeb"
+import { InternalMessage, InternalMessager } from "../../lib/InternalMessager"
 import { useContext } from "react"
 
 const State_Context = createContext<State_Type | null>(null)

@@ -1,5 +1,6 @@
 import { Model } from "@ai-mask/core";
-import { InternalMessager } from "./InternalMessagerWeb";
+import { InternalMessager } from "./InternalMessager";
+import localforage from 'localforage'
 
 export interface State_Type {
     cached_models: { [id: string]: boolean }
@@ -23,27 +24,24 @@ type State_Type_Value = State_Type[State_Type_Keys]
 
 class State {
     state: State_Type = INITIAL_State
+    lf: LocalForage = localforage.createInstance({
+        name: 'ai-mask-extension',
+        driver: [
+            localforage.INDEXEDDB,
+            localforage.LOCALSTORAGE
+        ],
+    })
 
     async init(reset = false) {
         if (reset) {
             this.state = INITIAL_State
-            await chrome.storage.local.clear()
+            await this.lf.clear()
         }
-        const storedValues = await chrome.storage.local.get(['cached_models'])
-        this.state.cached_models = storedValues.cached_models || {}
+        const cached_models = await this.lf.getItem('cached_models') as State_Type['cached_models']
+        this.state.cached_models = cached_models || {}
         await this.notifyUpdate()
         await this.updateCachedModelsSize()
         this.set('status', 'initialized')
-        /*
-        const initialized = await this.get('status')
-        if (reset || initialized !== 'initialized') {
-            for (const key in INITIAL_State) {
-                await this.set(key as State_Type_Keys, INITIAL_State[key as State_Type_Keys] as State_Type_Value)
-            }
-        }
-        this.set('loaded_model', undefined)
-
-        */
     }
 
     async updateCachedModelsSize() {
@@ -55,7 +53,7 @@ class State {
         for (const cachesKey of cachesKeys) {
             const cache = await caches.open(cachesKey)
             const requests = await cache.keys()
-
+    
             for (const request of requests) {
                 const response = await caches.match(request)
                 const responseSize = response ? Number(response.headers.get('content-length')) : 0;
@@ -99,9 +97,7 @@ class State {
     async setCached(id: Model['id'], cached: boolean = true) {
         this.state.cached_models[id] = cached
         await this.notifyUpdate('cached_models')
-        await chrome.storage.local.set({
-            cached_models: this.state.cached_models
-        })
+        await this.lf.setItem('cached_models', this.state.cached_models)
         await this.updateCachedModelsSize()
     }
 }

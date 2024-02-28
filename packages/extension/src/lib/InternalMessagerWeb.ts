@@ -10,7 +10,7 @@ class InternalMessagerClass {
         let responses = []
         for (const listener of this.listeners) {
             responses.push(await listener(message).catch((error: any) => {
-                if (error.message?.includes('unsupported message')) {
+                if (broadcast || error.message?.includes('unsupported message')) {
                     return null
                 } else {
                     console.error(error)
