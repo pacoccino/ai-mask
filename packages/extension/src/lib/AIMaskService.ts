@@ -58,7 +58,7 @@ export class AIMaskService {
     async unloadModel() {
         if (this.inferer) {
             this.inferer.unload()
-            await extensionState.set('status', 'initialied')
+            await extensionState.set('status', 'initialized')
             await extensionState.set('loaded_model', undefined)
             await InternalMessager.send({
                 type: 'models_updated',
@@ -84,6 +84,7 @@ export class AIMaskService {
             const inferer = await this.getInferer(params)
             await extensionState.set('status', 'infering')
             const response = await inferer.infer(params, streamhandler)
+
             await extensionState.set('status', 'loaded')
             return response
         } catch (error) {
@@ -102,7 +103,7 @@ export class AIMaskService {
             case 'unload_model':
                 return await this.unloadModel()
             default:
-                console.log(message)
+                //console.log(message)
                 throw new Error(`unsupported message type ${message.type}`)
         }
     }

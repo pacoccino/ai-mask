@@ -8,4 +8,4 @@ if (import.meta.env.VITE_ENABLE_SIDE_PANEL) {
         .catch(console.error);
 }
 
-new AIMaskService()
+// new AIMaskService()

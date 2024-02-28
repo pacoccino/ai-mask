@@ -1,12 +1,12 @@
 import { Model } from "@ai-mask/core";
-import { InternalMessager } from "./InternalMessager";
+import { InternalMessager } from "./InternalMessagerWeb";
 
 export interface State_Type {
     cached_models: { [id: string]: boolean }
     cache_progress: { [id: string]: number }
     loaded_model: Model['id'] | undefined
     cache_size: number
-    status: 'uninitialized' | 'initialied' | 'loading' | 'loaded' | 'error' | 'infering'
+    status: 'uninitialized' | 'initialized' | 'loading' | 'loaded' | 'error' | 'infering'
     error?: string
 }
 
@@ -33,14 +33,14 @@ class State {
         this.state.cached_models = storedValues.cached_models || {}
         await this.notifyUpdate()
         await this.updateCachedModelsSize()
+        this.set('status', 'initialized')
         /*
         const initialized = await this.get('status')
-        if (reset || initialized !== 'initialied') {
+        if (reset || initialized !== 'initialized') {
             for (const key in INITIAL_State) {
                 await this.set(key as State_Type_Keys, INITIAL_State[key as State_Type_Keys] as State_Type_Value)
             }
         }
-        this.set('status', 'initialied')
         this.set('loaded_model', undefined)
 
         */

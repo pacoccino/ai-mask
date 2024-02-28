@@ -2,7 +2,7 @@ import { createContext } from "react"
 import { State_Type } from "../../lib/State"
 import { useEffect } from "react"
 import { useState } from "react"
-import { InternalMessage, InternalMessager } from "../../lib/InternalMessager"
+import { InternalMessage, InternalMessager } from "../../lib/InternalMessagerWeb"
 import { useContext } from "react"
 
 const State_Context = createContext<State_Type | null>(null)
@@ -12,8 +12,10 @@ export function StateProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const handler = async (message: InternalMessage) => {
-            if (message.type === 'state_updated')
-                setExtensionState(message.data.state)
+            if (message.type === 'state_updated') {
+                //setExtensionState(message.data.state)
+                setExtensionState({ ...message.data.state })
+            }
         }
         InternalMessager.listen(handler)
 

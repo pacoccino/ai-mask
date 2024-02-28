@@ -22,6 +22,7 @@ const externally_connectable_urls = [
 ]
 let permissions: chrome.runtime.ManifestPermissions[] = [
     "storage",
+    "offscreen",
 ]
 let side_panel: chrome.sidePanel.SidePanel | undefined = undefined
 

@@ -12,6 +12,7 @@ export interface ModelLoadReport {
 
 // https://github.com/xenova/transformers.js/pull/462
 env.backends.onnx.wasm.numThreads = 1
+env.allowLocalModels = false;
 
 export class AIMaskInferer {
     model: Model

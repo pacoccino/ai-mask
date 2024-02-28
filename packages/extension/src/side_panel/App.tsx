@@ -4,7 +4,7 @@ import clsx from 'clsx'
 
 const state_colors = {
     'uninitialized': 'bg-orange-400',
-    'initialied': 'bg-green-200',
+    'initialized': 'bg-green-200',
     'loading': 'bg-orange-400',
     'loaded': 'bg-green-400',
     'infering': 'bg-blue-400',
@@ -12,7 +12,7 @@ const state_colors = {
 }
 const state_text = {
     'uninitialized': '🕒 Initializing',
-    'initialied': '🕒 Waiting',
+    'initialized': '🕒 Waiting',
     'loading': '⬇️ Loading...',
     'loaded': '🟢 Ready',
     'infering': '🧠 Infering...',
