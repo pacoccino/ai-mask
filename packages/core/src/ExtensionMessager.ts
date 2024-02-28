@@ -62,7 +62,7 @@ export class ExtensionMessager<T extends MessageRequest> {
                     data: response,
                 } satisfies WebMessageResponse)
             } catch (error: any) {
-                // console.log('[ExtensionMessager] onMessage error response', message, error)
+                console.log('[ExtensionMessager] onMessage error response', message, error)
                 port.postMessage({
                     messageId,
                     type: 'error',
@@ -124,6 +124,7 @@ export class ExtensionMessagerClient<T extends MessageRequest> {
                 // console.log('[ExtensionMessagerClient] send callback', request, response)
 
                 if (response.type === 'error') {
+                    console.log('[ExtensionMessagerClient] send callback error', request, response)
                     reject(new Error(response.data))
                     return
                 } else if (streamCallback && response.type === 'stream') {

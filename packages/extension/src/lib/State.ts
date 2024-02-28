@@ -7,6 +7,7 @@ export interface State_Type {
     loaded_model: Model['id'] | undefined
     cache_size: number
     status: 'uninitialized' | 'initialied' | 'loading' | 'loaded' | 'error' | 'infering'
+    error?: string
 }
 
 export const INITIAL_State: State_Type = {

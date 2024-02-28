@@ -86,9 +86,10 @@ export class AIMaskService {
             const response = await inferer.infer(params, streamhandler)
             await extensionState.set('status', 'loaded')
             return response
-        } catch (e) {
+        } catch (error) {
             await extensionState.set('status', 'error')
-            throw e
+            await extensionState.set('error', JSON.stringify(error))
+            throw error
         }
     }
 

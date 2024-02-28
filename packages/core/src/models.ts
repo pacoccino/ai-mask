@@ -41,3 +41,4 @@ export const models: Model[] = [
 export function getModel(id: Model['id']): Model | undefined {
     return models.find(model => model.id == id)
 }
+export type LLMDID = typeof models[number]['id']
