@@ -24,7 +24,7 @@ export default function App() {
     const status = extensionState?.status || 'uninitialized'
 
     return (
-        <div className={clsx("flex flex-col items-center", import.meta.env.DEV ? 'w-screen h-screen' : 'w-[350px] h-[500px]')} >
+        <div className={clsx("flex flex-col items-center", import.meta.env.VITE_ENABLE_SIDE_PANEL ? 'w-screen h-screen' : 'w-[380px] h-[500px]')} >
             <div className="flex space-x-2 py-4">
                 <img src="../../icons/icon-128.png" alt="AI-Mask Logo" className="w-8 h-8" />
                 <h1>AI-Mask</h1>

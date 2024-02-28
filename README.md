@@ -17,7 +17,8 @@ AI-Mask is a chrome **web extension** that serves as a gateway to  **AI** models
 
 See it as the [Metamask](https://metamask.io/) of AI. 
 
-[Try it !](https://pacoccino.github.io/ai-mask/)
+**Try it !**
+[Install the extension](https://pacoccino.github.io/ai-mask/), then open the [Chat app](https://chatbot.opac.me)
 
 
 [AI-Mask Demo.mp4](https://github.com/pacoccino/ai-mask/assets/1371207/f75e8b27-c91a-4bc6-bd14-8eae0d68050f)
