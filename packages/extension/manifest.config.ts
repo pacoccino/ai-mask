@@ -51,9 +51,10 @@ export default defineManifest(async (env) => {
 
     return {
         manifest_version: 3,
-        name: 'AI-Mask',
+        name: 'AI-Mask - In-browser inference',
         description: "Bring local inference into web apps !",
         version,
+        minimum_chrome_version: "109",
         key,
         icons: {
             "16": "icons/icon-16.png",

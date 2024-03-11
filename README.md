@@ -44,14 +44,14 @@ Another major feature planned is also to proxy requests to OpenAI-like APIs. Use
 This would solve:
 - Users won't have to share API keys with non-trusted apps anymore
 - Users won't share private data with apps
-- App developers won't need to have a backend server which proxies API request to alleviate cors problem and manipulate responses
+- App developers won't need to have a backend server which proxies API request to alleviate CORS issues and manipulate responses
 
 ## Supported Apps
 
 Web apps that are compatible with this extension for local inference:
  
 - [Demo App](https://pacoccino.github.io/ai-mask/)
-- [chatbot-ui](https://github.com/pacoccino/chatbot-ui/pull/1)
+- [chatbot-ui](https://chatbot.opac.me)
 
 ## Usage
 
@@ -63,10 +63,7 @@ Do not pay for using models again, do not leak private data, and do not give you
 
 **How To:**
 
-1. Install the extension: *Coming soon*
-
-
-
+1. [Install the extension](https://chromewebstore.google.com/detail/lkfaajachdpegnlpikpdajccldcgfdde)
 2. Use a [Supported app](#supported-apps)
 
 
