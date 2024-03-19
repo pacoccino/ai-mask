@@ -1,5 +1,18 @@
-import { Model, ExtensionMessagerClient, MessagerStreamHandler, AIActionParams, AIActions, AIAction, ChatCompletionParams, TranslationParams } from "@ai-mask/core";
+import { Model, ExtensionMessagerClient, MessagerStreamHandler, ExtensionMessageRequestData, AIActions, AIAction, ChatCompletionParams, TranslationParams } from "@ai-mask/core";
 import { createFakePort } from './utils'
+
+export interface InferOptionsBase {
+    modelId: Model['id']
+    stream?: boolean | null;
+}
+export interface InferOptionsNonStreaming extends InferOptionsBase {
+    stream?: false | null;
+}
+export interface InferOptionsStreaming extends InferOptionsBase {
+    stream: true
+}
+
+export type InferOptions = InferOptionsNonStreaming | InferOptionsStreaming
 
 export class AIMaskClient {
     messager: ExtensionMessagerClient<AIActions>
@@ -23,36 +36,75 @@ export class AIMaskClient {
         this.messager.dispose()
     }
 
-    private async request<T>(request: AIAction<T>, streamHandler?: MessagerStreamHandler): Promise<any> {
-        return this.messager.send(request, streamHandler)
+    private async request<T>(request: AIAction<T>, streamCallback?: MessagerStreamHandler): Promise<any> {
+        return this.messager.send(request, streamCallback)
     }
 
-    async infer(params: AIActionParams<'infer'>, streamCallback?: MessagerStreamHandler): Promise<string> {
-        return this.request({
-            action: 'infer',
-            params,
-        }, streamCallback)
-    }
+    private async *requestStream<T>(request: AIAction<T>): AsyncIterator<string> {
+        let resolve: (data: string) => void
+        let done = false
+        let promise = new Promise<string>(r => resolve = r)
 
-    async chat(modelId: Model['id'], params: ChatCompletionParams, streamCallback?: MessagerStreamHandler): Promise<string> {
-        return this.request({
+        this.messager.send(request, data => {
+            resolve(data)
+            promise = new Promise<string>(r => resolve = r)
+        }).then(() => done = true)
+        while (!done) {
+            yield await promise
+        }
+    }
+    /*
+     private requestStream<T>(request: AIAction<T>): ReadableStream<string> {
+         const messager = this.messager
+         return new ReadableStream({
+             start(controller) {
+                 messager.send(request, data => {
+                     controller.enqueue(data);
+                 }).then(() => {
+                     controller.close
+                 })
+             }
+         });
+     }
+     */
+
+
+    async chat(params: ChatCompletionParams, options: InferOptionsNonStreaming): Promise<string>
+    async chat(params: ChatCompletionParams, options: InferOptionsStreaming): Promise<AsyncIterator<string>>
+    async chat(params: ChatCompletionParams, options: InferOptions): Promise<string | AsyncIterator<string>> {
+        const request: AIAction<'infer'> = {
             action: 'infer',
             params: {
-                modelId,
+                modelId: options.modelId,
                 task: 'chat',
                 params,
             },
-        }, streamCallback)
+        }
+        if (options.stream) {
+            return this.requestStream(request)
+
+        } else {
+            return this.request(request)
+        }
     }
-    async translate(modelId: Model['id'], params: TranslationParams, streamCallback?: MessagerStreamHandler): Promise<string> {
-        return this.request({
+
+    async translate(params: TranslationParams, options: InferOptionsNonStreaming): Promise<string>
+    async translate(params: TranslationParams, options: InferOptionsStreaming): Promise<AsyncIterator<string>>
+    async translate(params: TranslationParams, options: InferOptions): Promise<string | AsyncIterator<string>> {
+        const request: AIAction<'infer'> = {
             action: 'infer',
             params: {
-                modelId,
+                modelId: options.modelId,
                 task: 'translation',
                 params,
             },
-        }, streamCallback)
+        }
+        if (options.stream) {
+            return this.requestStream(request)
+
+        } else {
+            return this.request(request)
+        }
     }
 
     async getModels(): Promise<Model[]> {

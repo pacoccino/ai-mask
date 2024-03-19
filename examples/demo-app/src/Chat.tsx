@@ -16,21 +16,6 @@ export default function Chat() {
         const modelId = selectedModel.id
 
         try {
-            const streamCallback = (chunk: string) => {
-
-                setMessages(prev =>
-                    prev.map((message, i) => {
-                        if (i === prev.length - 1)
-                            return {
-                                ...message,
-                                content: message.content + chunk
-                            }
-                        return message
-                    })
-                )
-
-            }
-
             setLoading(true)
             setPrompt('')
 
@@ -46,7 +31,7 @@ export default function Chat() {
                 }
             ])
 
-            await aiMaskClient.chat(modelId,
+            const stream = await aiMaskClient.chat(
                 {
                     messages: [
                         ...messages,
@@ -56,8 +41,26 @@ export default function Chat() {
                         }
                     ],
                 },
-                streamCallback
-            );
+                {
+                    modelId,
+                    stream: true
+                });
+
+            // TODO fix this async iterable type error
+            // @ts-ignore
+            for await (const chunk of stream) {
+                setMessages(prev =>
+                    prev.map((message, i) => {
+                        if (i === prev.length - 1)
+                            return {
+                                ...message,
+                                content: message.content + chunk
+                            }
+                        return message
+                    })
+                )
+            }
+
             setLoading(false)
         } catch (error) {
             console.log(error)

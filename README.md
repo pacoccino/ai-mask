@@ -85,8 +85,8 @@ const messages = [{ role: 'user', content: 'What is the capital of France ? ' }]
 
 const aiMaskClient = new AIMaskClient()
 const response = await aiMaskClient.chat(
-    'gemma-2b-it-q4f32_1',
 	{ messages },
+  { modelId: 'gemma-2b-it-q4f32_1' },
 )
 ```
 
@@ -134,7 +134,7 @@ pnpm build
 - [x] Deploy demo app
 - [x] Deploy extension
 - [x] SDK Working in web workers
-- [ ] Match OpenAI SDK API / Provide ReadableStream from AIMasklient
+- [x] ReadableStream option
 - [ ] Proxy OpenAI-like API requests and store user keys
 - [ ] Create Langchain community libs
 - [ ] Interrupts

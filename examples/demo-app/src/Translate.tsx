@@ -16,17 +16,17 @@ export default function Translate() {
 
         setOutputText('generating...')
         try {
-            const streamCallback = (response: string) => {
-                setOutputText(`${response}...`);
-            }
-            const response = await aiMaskClient.translate(modelId,
+            const response = await aiMaskClient.translate(
                 {
                     sourceLang,
                     destLang,
                     inputText
                 },
-                streamCallback
+                {
+                    modelId,
+                }
             );
+
             setOutputText(response);
         } catch (error) {
             console.log(error)

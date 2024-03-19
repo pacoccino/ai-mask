@@ -27,8 +27,8 @@ const messages = [{ role: 'user', content: 'What is the capital of France ? ' }]
 
 const aiMaskClient = new AIMaskClient()
 const response = await aiMaskClient.chat(
-    'gemma-2b-it-q4f32_1',
 	{ messages },
+  { modelId: 'gemma-2b-it-q4f32_1' },
 )
 ```
 
@@ -62,17 +62,20 @@ type Model {
 }
 
 // Chat with an OpenAI-like request
-async aiMaskClient.chat(modelId: string, params: ChatCompletionParams, streamCallback?: MessagerStreamHandler): Promise<string>
+async aiMaskClient.chat(params: ChatCompletionParams, options: InferOptions): Promise<string | ReadableStream<string>>
 
 type ChatCompletionParams = {
     messages: [{ role: 'user' | 'assistant', content: string }]
     max_tokens: number
     temperature: number
 }
-type MessagerStreamHandler = (new_text: string) => void
+type InferOptions = {
+    modelId: string
+    stream?: boolean
+}
 
 // Translate text from one language to another
-async aiMaskClient.translate(modelId: string, params: TranslationParams, streamCallback?: MessagerStreamHandler): Promise<string>
+async aiMaskClient.translate(params: TranslationParams, options: InferOptions): Promise<string>
 
 type TranslationParams = {
     inputText: string

@@ -7,8 +7,10 @@ async function main() {
 
     self.addEventListener("message", async ({ data }) => {
         if (data.type === 'chat') {
-            aiMaskClient.chat(data.model, {
+            aiMaskClient.chat({
                 messages: data.messages
+            }, {
+                modelId: data.model
             }).then(response => self.postMessage({
                 type: 'chat_response',
                 response,
