@@ -133,8 +133,10 @@ pnpm build
 - [X] Documentation
 - [x] Deploy demo app
 - [x] Deploy extension
+- [x] SDK Working in web workers
 - [ ] Match OpenAI SDK API / Provide ReadableStream from AIMasklient
 - [ ] Proxy OpenAI-like API requests and store user keys
+- [ ] Create Langchain community libs
 - [ ] Interrupts
 - [ ] Include react Hooks/utilities in SDK
 - [ ] Pull request in one popular AI app

@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    h1 {
+        @apply text-2xl font-bold mb-4;
+    }
+
+    h2 {
+        @apply text-xl font-semibold mb-4;
+    }
+
+    button {
+        @apply text-center p-2 rounded-lg shadow bg-orange-500 hover:bg-orange-600 active:bg-orange-700 disabled:bg-orange-100 disabled:text-orange-400 text-white;
+    }
+
+    select {
+        @apply border border-orange-900 p-2 rounded-md;
+    }
+}

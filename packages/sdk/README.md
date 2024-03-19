@@ -82,3 +82,29 @@ type TranslationParams = {
 ```
 
 For `sourceLang` and `destLang`, see [languages](/packages/core/src/config/translation.ts)
+
+### Usage in Workers
+
+If you need to use AIMask from a Web Worker, some additional steps are required.
+
+Please check the [demo app with worker](/examples/demo-app-worker/src) for an example implementation.
+
+
+- In the worker, use `async AIMaskClient.getWorkerClient()` to get an AIMaskClient instance.  
+- In the main thread, after initializing your worker and having an AIMaskClient instance, call `aiMaskClient.sendWorkerPort(worker.current)`
+
+```typescript
+// main.ts
+const aiMaskClient = new AIMaskClient()
+const worker = new Worker(
+    new URL('./worker.ts', import.meta.url), 
+    {
+        type: 'module',
+    });
+aiMaskClient.sendWorkerPort(worker)
+```
+
+```typescript
+// worker.ts
+const aiMaskClient = await AIMaskClient.getWorkerClient()
+```

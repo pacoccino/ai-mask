@@ -1,10 +1,10 @@
-import { ExtensionMessager, MessagerStreamHandler, AIActions, AIActionParams, getModel, models } from "@ai-mask/core";
+import { ExtensionMessagerServer, MessagerStreamHandler, AIActions, AIActionParams, getModel, models } from "@ai-mask/core";
 import { extensionState } from "./State";
 import { InternalMessage, InternalMessager } from "./InternalMessager";
 import { ModelLoadReport, AIMaskInferer } from "./AIMaskInfer";
 
 export class AIMaskService {
-    messager: ExtensionMessager<AIActions>
+    messager: ExtensionMessagerServer<AIActions>
     inferer: AIMaskInferer | null = null
 
     //unloadTimeout: number | undefined
@@ -12,7 +12,7 @@ export class AIMaskService {
 
     constructor() {
         // @ts-ignore
-        this.messager = new ExtensionMessager<AIActions>(this.handleAppMessage.bind(this))
+        this.messager = new ExtensionMessagerServer<AIActions>(this.handleAppMessage.bind(this))
         InternalMessager.listen(this.handleInternalMessage.bind(this))
         extensionState.init().catch(console.error)
     }

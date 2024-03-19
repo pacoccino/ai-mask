@@ -1,10 +1,10 @@
 import { config } from './config'
 
-type WebMessageBase = {
+type ExtensionMessageBase = {
     messageId: string
 }
 
-type WebMessageRequest<ACTION = string, REQ_PARAMS = {}> = WebMessageBase & {
+type ExtensionMessageRequest<ACTION = string, REQ_PARAMS = {}> = ExtensionMessageBase & {
     type: 'request'
     request: {
         action: ACTION
@@ -12,18 +12,18 @@ type WebMessageRequest<ACTION = string, REQ_PARAMS = {}> = WebMessageBase & {
     }
 }
 
-type WebMessageResponse<RES_DATA = undefined> = WebMessageBase & {
+type ExtensionMessageResponse<RES_DATA = undefined> = ExtensionMessageBase & {
     type: 'success' | 'error' | 'stream'
     data: RES_DATA
 }
 
-export type MessageRequest<ACTION = string, REQ_PARAMS = {}> = WebMessageRequest<ACTION, REQ_PARAMS>['request']
+export type ExtensionMessageRequestData<ACTION = string, REQ_PARAMS = {}> = ExtensionMessageRequest<ACTION, REQ_PARAMS>['request']
 
-export type MessagerRequestHandler<ACTION = string, REQ_PARAMS = {}, RES_DATA = undefined> = (request: MessageRequest<ACTION, REQ_PARAMS>, streamHandler: MessagerStreamHandler<RES_DATA>) => Promise<RES_DATA>
+export type MessagerRequestHandler<ACTION = string, REQ_PARAMS = {}, RES_DATA = undefined> = (request: ExtensionMessageRequestData<ACTION, REQ_PARAMS>, streamHandler: MessagerStreamHandler<RES_DATA>) => Promise<RES_DATA>
 export type MessagerResponseHandler<RES_DATA = any> = (data: RES_DATA) => void
 export type MessagerStreamHandler<RES_DATA = any> = (data: RES_DATA) => void
 
-export class ExtensionMessager<T extends MessageRequest> {
+export class ExtensionMessagerServer<T extends ExtensionMessageRequestData> {
     handler: MessagerRequestHandler | undefined
 
     constructor(handler: MessagerRequestHandler<T['action'], T['params']>) {
@@ -34,66 +34,71 @@ export class ExtensionMessager<T extends MessageRequest> {
     }
 
     private onConnect(port: chrome.runtime.Port) {
-        port.onMessage.addListener(async (message: WebMessageRequest) => {
-            // console.log('[ExtensionMessager] onMessage', message)
+        port.onMessage.addListener(async (message: ExtensionMessageRequest) => {
+            // console.log('[ExtensionMessagerServer] onMessage', message)
             if (!this.handler) {
-                console.log('[ExtensionMessager] connection from web but no handler')
+                console.log('[ExtensionMessagerServer] connection from web but no handler')
                 return
             }
             if (message.type !== 'request') {
-                console.error('[ExtensionMessager] Unexpected message in server', message)
+                console.error('[ExtensionMessagerServer] Unexpected message in server', message)
                 return
             }
             const { messageId, request } = message
             const streamHandler = (data: any) => {
-                // console.log('[ExtensionMessager] onMessage stream response', message, data)
+                // console.log('[ExtensionMessagerServer] onMessage stream response', message, data)
                 port.postMessage({
                     messageId,
                     type: 'stream',
                     data,
-                } satisfies WebMessageResponse)
+                } satisfies ExtensionMessageResponse)
             }
             try {
                 const response = await this.handler(request, streamHandler)
-                // console.log('[ExtensionMessager] onMessage response', message, response)
+                // console.log('[ExtensionMessagerServer] onMessage response', message, response)
                 port.postMessage({
                     messageId,
                     type: 'success',
                     data: response,
-                } satisfies WebMessageResponse)
+                } satisfies ExtensionMessageResponse)
             } catch (error: any) {
-                console.log('[ExtensionMessager] onMessage error response', message, error)
+                console.log('[ExtensionMessagerServer] onMessage error response', message, error)
                 port.postMessage({
                     messageId,
                     type: 'error',
                     data: error?.message,
-                } satisfies WebMessageResponse)
+                } satisfies ExtensionMessageResponse)
             }
         })
     }
 }
 
-export class ExtensionMessagerClient<T extends MessageRequest> {
+export class ExtensionMessagerClient<T extends ExtensionMessageRequestData> {
     handlers: { [key: string]: MessagerResponseHandler }
-    onMessageHandler: ((message: WebMessageResponse) => void) | undefined
+    onMessageHandler: ((message: ExtensionMessageResponse) => void) | undefined
     port: chrome.runtime.Port | undefined
 
-    constructor({ name }: { name: string }) {
+    constructor({ name, port }: { name: string, port?: chrome.runtime.Port }) {
         this.handlers = {}
+        if (port) {
+            this.port = port
+        }
         this.listen(name)
     }
 
     private listen(name: string) {
-        this.port = chrome.runtime.connect(
-            config.EXTENSION_ID,
-            {
-                name,
-            }
-        )
-        this.onMessageHandler = (message: WebMessageResponse) => {
+        if (!this.port) {
+            this.port = chrome.runtime.connect(
+                config.EXTENSION_ID,
+                {
+                    name,
+                }
+            )
+        }
+        this.onMessageHandler = (message: ExtensionMessageResponse) => {
             //console.log('[ExtensionMessagerClient] onMessage', message)
             const { messageId } = message
-            const handler = this.handlers[messageId]
+            const handler = this.handlers[messageId] || this.handlers['passthrough']
             if (!handler) {
                 console.error('[ExtensionMessagerClient] no handler for message', message)
                 return
@@ -103,16 +108,26 @@ export class ExtensionMessagerClient<T extends MessageRequest> {
         this.port.onMessage.addListener(this.onMessageHandler)
     }
 
+    setPassthroughListener(listener: (message: ExtensionMessageResponse) => void) {
+        this.handlers['passthrough'] = listener
+    }
+
+    passthroughRequest(message: ExtensionMessageRequest) {
+        if (!this.port) throw new Error('ExtensionMessagerClient disposed')
+        this.port.postMessage(message);
+    }
+
     dispose() {
         if (this.onMessageHandler && this.port) {
             this.port.onMessage.removeListener(this.onMessageHandler)
             this.port.disconnect()
             this.onMessageHandler = undefined
+            this.handlers = {}
             this.port = undefined
         }
     }
 
-    send(request: MessageRequest<T['action'], T['params']>, streamCallback?: MessagerStreamHandler): Promise<any> {
+    send(request: ExtensionMessageRequestData<T['action'], T['params']>, streamCallback?: MessagerStreamHandler): Promise<any> {
         return new Promise((resolve, reject) => {
             if (!this.port || !this.onMessageHandler) throw new Error('ExtensionMessagerClient disposed')
             // console.log('[ExtensionMessagerClient] send', request)
@@ -120,7 +135,7 @@ export class ExtensionMessagerClient<T extends MessageRequest> {
             const now = Date.now()
             const rand = Math.random().toString(36).substring(7)
             const messageId = `${now}-${rand}`
-            const callback = (response: WebMessageResponse) => {
+            const callback = (response: ExtensionMessageResponse) => {
                 // console.log('[ExtensionMessagerClient] send callback', request, response)
 
                 if (response.type === 'error') {
@@ -139,7 +154,7 @@ export class ExtensionMessagerClient<T extends MessageRequest> {
                 messageId,
                 type: 'request',
                 request,
-            } satisfies WebMessageRequest)
+            } satisfies ExtensionMessageRequest)
         })
     }
 }
