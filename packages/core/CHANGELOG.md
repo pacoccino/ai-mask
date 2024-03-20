@@ -1,5 +1,11 @@
 # @ai-mask/core
 
+## 0.6.0
+
+### Minor Changes
+
+- port passthrough
+
 ## 0.5.0
 
 ### Minor Changes
