@@ -115,19 +115,23 @@ export class AIMaskClient {
     }
 
     // TODO: only one worker can be used with AIMask atm
-    sendWorkerPort(worker: Worker) {
-        const { port1: mainPort, port2: workerPort } = new MessageChannel();
+    provideWorkerPort(worker: Worker) {
+        worker.addEventListener('message', ({ data }) => {
+            if (data._AIMaskWorkerPortRequest) {
+                const { port1: mainPort, port2: workerPort } = new MessageChannel();
 
-        this.messager.setPassthroughListener((message) => {
-            mainPort.postMessage(message)
+                this.messager.setPassthroughListener((message) => {
+                    mainPort.postMessage(message)
+                })
+
+                mainPort.onmessage = (event) => {
+                    const message = event.data
+                    this.messager.passthroughRequest(message)
+                }
+
+                worker.postMessage({ _AIMaskWorkerPort: workerPort }, [workerPort]);
+            }
         })
-
-        mainPort.onmessage = (event) => {
-            const message = event.data
-            this.messager.passthroughRequest(message)
-        }
-
-        worker.postMessage({ _AIMaskWorkerPort: workerPort }, [workerPort]);
     }
 
     static async getWorkerClient() {
@@ -135,14 +139,17 @@ export class AIMaskClient {
             const timeout = setTimeout(() => {
                 reject(new Error('[AIMaskWorkerClient] Did not receive worker port, did you send from main thread with aiMask.sendWorkerPort(worker) ?'))
             }, 2000)
-            self.addEventListener("message", async ({ data }) => {
+            const listener = ({ data }: any) => {
                 if (data._AIMaskWorkerPort) {
-                    clearTimeout(timeout)
+                    self.removeEventListener("message", listener)
+                    clearInterval(timeout)
                     const fakePort = createFakePort(data._AIMaskWorkerPort)
                     const aiMaskClient = new AIMaskClient({ port: fakePort })
                     resolve(aiMaskClient)
                 }
-            });
+            }
+            self.addEventListener("message", listener)
+            self.postMessage({ _AIMaskWorkerPortRequest: true })
         })
     }
 }

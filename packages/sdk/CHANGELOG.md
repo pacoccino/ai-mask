@@ -1,5 +1,11 @@
 # @ai-mask/sdk
 
+## 0.7.2
+
+### Patch Changes
+
+- passive port providing for workers
+
 ## 0.7.1
 
 ### Patch Changes

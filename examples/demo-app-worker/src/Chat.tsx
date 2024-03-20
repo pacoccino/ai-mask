@@ -18,7 +18,7 @@ export default function Chat() {
             worker.current = new Worker(new URL('./worker.ts', import.meta.url), {
                 type: 'module',
             });
-            aiMaskClient.sendWorkerPort(worker.current)
+            aiMaskClient.provideWorkerPort(worker.current)
             setLoading(false);
         }
     }, []);
