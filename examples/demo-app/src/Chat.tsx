@@ -46,8 +46,6 @@ export default function Chat() {
                     stream: true
                 });
 
-            // TODO fix this async iterable type error
-            // @ts-ignore
             for await (const chunk of stream) {
                 setMessages(prev =>
                     prev.map((message, i) => {

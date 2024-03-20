@@ -94,7 +94,7 @@ Please check the [demo app with worker](/examples/demo-app-worker/src) for an ex
 
 
 - In the worker, use `async AIMaskClient.getWorkerClient()` to get an AIMaskClient instance.  
-- In the main thread, after initializing your worker and having an AIMaskClient instance, call `aiMaskClient.sendWorkerPort(worker.current)`
+- In the main thread, *just* after initializing your worker and having an AIMaskClient instance, call `aiMaskClient.providerWorkerPort(worker)`
 
 ```typescript
 // main.ts
@@ -104,7 +104,7 @@ const worker = new Worker(
     {
         type: 'module',
     });
-aiMaskClient.sendWorkerPort(worker)
+aiMaskClient.provideWorkerPort(worker)
 ```
 
 ```typescript

@@ -40,7 +40,7 @@ export class AIMaskClient {
         return this.messager.send(request, streamCallback)
     }
 
-    private async *requestStream<T>(request: AIAction<T>): AsyncIterator<string> {
+    private async *requestStream<T>(request: AIAction<T>): AsyncGenerator<string> {
         let resolve: (data: string) => void
         let done = false
         let promise = new Promise<string>(r => resolve = r)
@@ -70,8 +70,8 @@ export class AIMaskClient {
 
 
     async chat(params: ChatCompletionParams, options: InferOptionsNonStreaming): Promise<string>
-    async chat(params: ChatCompletionParams, options: InferOptionsStreaming): Promise<AsyncIterator<string>>
-    async chat(params: ChatCompletionParams, options: InferOptions): Promise<string | AsyncIterator<string>> {
+    async chat(params: ChatCompletionParams, options: InferOptionsStreaming): Promise<AsyncGenerator<string>>
+    async chat(params: ChatCompletionParams, options: InferOptions): Promise<string | AsyncGenerator<string>> {
         const request: AIAction<'infer'> = {
             action: 'infer',
             params: {
@@ -89,8 +89,8 @@ export class AIMaskClient {
     }
 
     async translate(params: TranslationParams, options: InferOptionsNonStreaming): Promise<string>
-    async translate(params: TranslationParams, options: InferOptionsStreaming): Promise<AsyncIterator<string>>
-    async translate(params: TranslationParams, options: InferOptions): Promise<string | AsyncIterator<string>> {
+    async translate(params: TranslationParams, options: InferOptionsStreaming): Promise<AsyncGenerator<string>>
+    async translate(params: TranslationParams, options: InferOptions): Promise<string | AsyncGenerator<string>> {
         const request: AIAction<'infer'> = {
             action: 'infer',
             params: {
