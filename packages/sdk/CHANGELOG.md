@@ -1,5 +1,11 @@
 # @ai-mask/sdk
 
+## 0.7.3
+
+### Patch Changes
+
+- fix typing and doc
+
 ## 0.7.2
 
 ### Patch Changes
