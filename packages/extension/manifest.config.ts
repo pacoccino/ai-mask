@@ -42,11 +42,11 @@ export default defineManifest(async (env) => {
 
     if (env_vars.VITE_ENABLE_SIDE_PANEL) {
         side_panel = {
-            default_path: "src/side_panel/page.html",
+            default_path: "src/popup/page.html",
         }
         permissions.push("sidePanel")
     } else {
-        action.default_popup = "src/side_panel/page.html"
+        action.default_popup = "src/popup/page.html"
     }
 
     return {
@@ -54,7 +54,7 @@ export default defineManifest(async (env) => {
         name: 'AI-Mask - In-browser inference',
         description: "Bring local inference into web apps !",
         version,
-        minimum_chrome_version: "109",
+        minimum_chrome_version: "109", // TODO 124 webgpu in service worker
         key,
         icons: {
             "16": "icons/icon-16.png",

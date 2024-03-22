@@ -43,5 +43,5 @@ async function setupOffscreenDocument() {
 
 InternalMessager.listen(async () => {
     console.log('received message')
-    setupOffscreenDocument()
+    await setupOffscreenDocument()
 })
