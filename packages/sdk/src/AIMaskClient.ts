@@ -68,7 +68,6 @@ export class AIMaskClient {
      }
      */
 
-
     async chat(params: ChatCompletionParams, options: InferOptionsNonStreaming): Promise<string>
     async chat(params: ChatCompletionParams, options: InferOptionsStreaming): Promise<AsyncGenerator<string>>
     async chat(params: ChatCompletionParams, options: InferOptions): Promise<string | AsyncGenerator<string>> {
