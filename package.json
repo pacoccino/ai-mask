@@ -5,7 +5,7 @@
         "url": "git+https://github.com/pacoccino/ai-mask"
     },
     "scripts": {
-        "build": "pnpm -r --filter=!./forks/* build",
+        "build": "pnpm build-sdk && pnpm build-page && pnpm build-extension",
         "build-sdk": "pnpm -r --filter=@ai-mask/sdk... build",
         "build-page": "pnpm -r --filter=@ai-mask/demo-app... build",
         "build-extension": "pnpm -r --filter=@ai-mask/chrome-extension... build",

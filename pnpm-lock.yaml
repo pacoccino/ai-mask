@@ -18,8 +18,8 @@ importers:
   examples/demo-app:
     dependencies:
       '@ai-mask/sdk':
-        specifier: ^0.6.0
-        version: 0.6.0
+        specifier: workspace:^
+        version: link:../../packages/sdk
       clsx:
         specifier: ^2.1.0
         version: 2.1.0
@@ -79,7 +79,7 @@ importers:
   examples/demo-app-worker:
     dependencies:
       '@ai-mask/sdk':
-        specifier: ^0.7.0
+        specifier: workspace:^
         version: link:../../packages/sdk
       clsx:
         specifier: ^2.1.0
@@ -618,16 +618,6 @@ packages:
   /@adobe/css-tools@4.3.3:
     resolution: {integrity: sha512-rE0Pygv0sEZ4vBWHlAgJLGDU7Pm8xoO6p3wsEceb7GYAjScrOHpEo8KK/eVkAcnSM+slAEtXjA2JpdjLp4fJQQ==}
     dev: true
-
-  /@ai-mask/core@0.5.0:
-    resolution: {integrity: sha512-fvrNRCni0/fNwOrL2TGKlrdQ21vhfxayNs3qo1/lVzqMTeyVIkrmhsHPpB8AAZFFa52aUhEpecAS71WmJJTMAg==}
-    dev: false
-
-  /@ai-mask/sdk@0.6.0:
-    resolution: {integrity: sha512-9NIcF/eck3AttffYNMeZ8mT3/w9jHRe71qZ4whXmCl9MTOmgLZgo2ELRGILlAqd+vgT0h2Q/Za5w9SCQW+o9Lg==}
-    dependencies:
-      '@ai-mask/core': 0.5.0
-    dev: false
 
   /@alloc/quick-lru@5.2.0:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
