@@ -31,7 +31,7 @@ On-device AI inference is getting quite a traction recently. Most of our devices
 
 Thanks to some [amazing](https://github.com/mlc-ai/web-llm) [libraries](https://github.com/xenova/transformers.js), running **machine learning** models **in the browser** has become ridiculously easy, accelerated with **WASM** and **WebGPU**. This means they'll work and run nearly at **full-performance** on virtually **any device**, hardware and operating system.
 
-**But** SOTA web inference libraries store models in the browser cache, which is per-domain. This means that if multiple web apps use the same models, it needs to be downloaded once per domain, which can use a **lot of disk space**.
+**But** State-of-the-art web inference libraries store models in the browser cache, which have been, for security reason, [domain partitionned](https://developer.chrome.com/blog/http-cache-partitioning). This means that if multiple web apps use the same models, it needs to be downloaded once per domain, which can use a **lot of disk space**.
 
 With this extension, the models are **cached only once** and served to the websites conveniently though an **unified SDK**.
 
@@ -52,6 +52,7 @@ Web apps that are compatible with this extension for local inference:
  
 - [Demo App](https://pacoccino.github.io/ai-mask/)
 - [chatbot-ui](https://chatbot.opac.me)
+- [fully-local-pdf-chatbot](https://github.com/jacoblee93/fully-local-pdf-chatbot/pull/19)
 
 ## Usage
 
@@ -102,7 +103,7 @@ You can see the [demo app code](/examples/demo-app/) and an [example pull reques
 AI-Mask is a ManifestV3 extension, heavily relying on the work of third party libraries to execute model inference:
   
 - [web-llm](https://github.com/mlc-ai/web-llm) Inference with WASM/WebGPU via Apache TVM
--  [transformers.js](https://github.com/mlc-ai/web-llm) Inference with WASM via ONNX Runtime
+- [transformers.js](https://github.com/mlc-ai/web-llm) Inference with WASM via ONNX Runtime
 
 Issues with service workers:
 - [WebGPU is not exposed to service workers](https://github.com/gpuweb/gpuweb/issues/4197) 
@@ -135,6 +136,7 @@ pnpm build
 - [x] Deploy extension
 - [x] SDK Working in web workers
 - [x] ReadableStream option
+- [ ] Bring back computation in service worker from chrome 124 thx to webgpu support
 - [ ] Proxy OpenAI-like API requests and store user keys
 - [ ] Create Langchain community libs
 - [ ] Interrupts
