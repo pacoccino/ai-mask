@@ -1,5 +1,11 @@
 # @ai-mask/core
 
+## 0.7.0
+
+### Minor Changes
+
+- embeddings
+
 ## 0.6.0
 
 ### Minor Changes

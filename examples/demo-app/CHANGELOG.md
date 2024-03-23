@@ -1,5 +1,12 @@
 # @ai-mask/demo-app
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @ai-mask/sdk@0.8.0
+
 ## 0.6.0
 
 ### Minor Changes

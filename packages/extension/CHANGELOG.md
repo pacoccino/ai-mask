@@ -1,5 +1,16 @@
 # @ai-mask/chrome-extension
 
+## 0.6.0
+
+### Minor Changes
+
+- embeddings
+
+### Patch Changes
+
+- Updated dependencies
+  - @ai-mask/core@0.7.0
+
 ## 0.5.1
 
 ### Patch Changes

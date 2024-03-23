@@ -1,5 +1,16 @@
 # @ai-mask/sdk
 
+## 0.8.0
+
+### Minor Changes
+
+- embeddings
+
+### Patch Changes
+
+- Updated dependencies
+  - @ai-mask/core@0.7.0
+
 ## 0.7.3
 
 ### Patch Changes
