@@ -35,9 +35,9 @@ const response = await aiMaskClient.chat(
 
 ## Integration examples
 
-[demo-app code](/examples/demo-app/)
-
-[chatbot-ui PR](https://github.com/pacoccino/chatbot-ui/pull/1/files)
+- [demo-app code](/examples/demo-app/)
+- [chatbot-ui PR](https://github.com/pacoccino/chatbot-ui/pull/1/files)
+- [fully-local-pdf-chatbot PR](https://github.com/jacoblee93/fully-local-pdf-chatbot/pull/19)
 
 ## API
 

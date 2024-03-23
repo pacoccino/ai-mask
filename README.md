@@ -4,7 +4,8 @@
 
 **Bring local inference into web apps !**
 
-[Download extension](https://chromewebstore.google.com/detail/lkfaajachdpegnlpikpdajccldcgfdde) | [Supported apps](#supported-apps) | [Integration guide](#for-integrators)
+[Download extension](https://chromewebstore.google.com/detail/lkfaajachdpegnlpikpdajccldcgfdde) | [Supported apps](#supported-apps) | [Integration guide](#for-integrators) | [SDK Documentation](/packages/sdk)
+
 
 [![npm version](https://badge.fury.io/js/@ai-mask%2Fsdk.svg)](https://badge.fury.io/js/@ai-mask%2Fsdk)
 
@@ -48,9 +49,9 @@ This would solve:
 
 Web apps that are compatible with this extension for local inference:
  
-- [Demo App](https://pacoccino.github.io/ai-mask/)
-- [chatbot-ui](https://chatbot.opac.me)
-- [fully-local-pdf-chatbot](https://github.com/jacoblee93/fully-local-pdf-chatbot/pull/19)
+- [Demo App](https://pacoccino.github.io/ai-mask/) ([code](/examples/demo-app/))
+- [chatbot-ui](https://chatbot.opac.me) ([code](https://github.com/mckaywrigley/chatbot-ui/pull/1590))
+- [fully-local-pdf-chatbot](https://fully-local-pdf-chatbot-topaz.vercel.app/) ([code](https://github.com/jacoblee93/fully-local-pdf-chatbot/pull/19))
 
 ## Usage
 
