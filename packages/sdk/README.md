@@ -82,6 +82,15 @@ type TranslationParams = {
     sourceLang: string
     destLang: string
 }
+
+// Create embeddings
+async aiMaskClient.featureExtraction(params: FeatureExtractionParams, options: InferOptions): Promise<number[][]>
+
+type TranslationParams = {
+    texts: string[]
+    pooling?: 'none' | 'mean' | 'cls'
+    normalize?: boolean
+}
 ```
 
 For `sourceLang` and `destLang`, see [languages](/packages/core/src/config/translation.ts)
