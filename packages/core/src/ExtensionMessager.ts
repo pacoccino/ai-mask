@@ -78,10 +78,13 @@ export class ExtensionMessagerClient<T extends ExtensionMessageRequestData> {
     onMessageHandler: ((message: ExtensionMessageResponse) => void) | undefined
     port: chrome.runtime.Port | undefined
 
-    constructor({ name, port }: { name: string, port?: chrome.runtime.Port }) {
+    constructor({ name, port }: { name?: string, port?: chrome.runtime.Port }) {
         this.handlers = {}
         if (port) {
             this.port = port
+        }
+        if (!name) {
+            name = (window || document)?.location?.origin || 'unknown'
         }
         this.listen(name)
     }

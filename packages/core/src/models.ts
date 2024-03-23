@@ -2,7 +2,7 @@ export type Model = {
     id: string
     name: string
     engine: 'web-llm' | 'transformers.js',
-    task: 'completion' | 'chat' | 'translation',
+    task: 'completion' | 'chat' | 'translation' | 'feature-extraction',
 }
 
 export const models: Model[] = [
@@ -36,9 +36,15 @@ export const models: Model[] = [
         engine: 'transformers.js',
         task: 'translation',
     },
+    {
+        id: 'Xenova/all-MiniLM-L6-v2',
+        name: 'MiniLM L6 v2',
+        engine: 'transformers.js',
+        task: 'feature-extraction'
+    },
 ]
 
-export function getModel(id: Model['id']): Model | undefined {
-    return models.find(model => model.id == id)
+export function getModel(id: Model['id'], engine?: Model['engine']): Model | undefined {
+    return models.find(model => model.id == id && (engine ? model.engine == engine : true))
 }
 export type LLMDID = typeof models[number]['id']

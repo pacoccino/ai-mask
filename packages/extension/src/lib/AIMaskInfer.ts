@@ -1,8 +1,8 @@
 import { ChatModule, InitProgressReport } from "@mlc-ai/web-llm";
 import { GenerateProgressCallback } from "@mlc-ai/web-llm/lib/types";
-import { env, pipeline, TranslationPipeline } from '@xenova/transformers';
+import { env, FeatureExtractionPipeline, pipeline, TranslationPipeline } from '@xenova/transformers';
 
-import { config, AIActionParams, MessagerStreamHandler, Model, ChatCompletionParams, CompletionParams, TranslationParams } from "@ai-mask/core";
+import { config, AIActionParams, MessagerStreamHandler, Model, ChatCompletionParams, CompletionParams, TranslationParams, EngineStubParams } from "@ai-mask/core";
 
 export interface ModelLoadReport {
     progress: number
@@ -11,16 +11,17 @@ export interface ModelLoadReport {
 }
 
 // https://github.com/xenova/transformers.js/pull/462
-// env.backends.onnx.wasm.numThreads = 1 // not needed in offscreen
+env.backends.onnx.wasm.numThreads = 1 // not needed in offscreen
 env.allowLocalModels = false;
 
 export class AIMaskInferer {
     model: Model
     inMemory: boolean = false
-    engineInstance: TranslationPipeline | ChatModule | null = null
-
-    constructor(model: Model) {
+    engineInstance: TranslationPipeline | FeatureExtractionPipeline | ChatModule | null = null
+    engineParams: EngineStubParams['engineParams']
+    constructor(model: Model, engineParams?: EngineStubParams['engineParams']) {
         this.model = model;
+        this.engineParams = engineParams
     }
 
     isReady(): boolean {
@@ -35,10 +36,13 @@ export class AIMaskInferer {
     async load(progressCallback?: (progress: ModelLoadReport) => void) {
         switch (this.model.engine) {
             case 'transformers.js':
+                if (this.model.task === 'completion' || this.model.task === 'chat') {
+                    throw new Error('nope')
+                }
                 let files: any[] = []
 
                 this.engineInstance = await pipeline(
-                    'translation',
+                    this.model.task,
                     this.model.id,
                     {
                         progress_callback: (event: any) => {
@@ -123,6 +127,17 @@ export class AIMaskInferer {
         }
     }
 
+    async stub(call_params: any[], streamhandler: MessagerStreamHandler<string>): Promise<any> {
+        if (this.model.engine !== 'transformers.js') throw new Error(`engine ${this.model.engine} not supported for stubbing`)
+        if (!this.isReady()) throw new Error('inferer not ready')
+
+        console.log(call_params)
+        const engine = this.getEngine() as FeatureExtractionPipeline
+
+        const response = await engine(call_params[0] as string[], call_params[1])
+
+        return response.tolist();
+    }
 
     async taskChat(params: ChatCompletionParams, streamhandler: MessagerStreamHandler<string>): Promise<string> {
         if (this.model.engine !== 'web-llm') throw new Error(`engine ${this.model.engine} not supported for completion`)
