@@ -1,4 +1,4 @@
-import { ExtensionMessagerServer, MessagerStreamHandler, AIActions, AIActionParams, getModel, models } from "@ai-mask/core";
+import { ExtensionMessagerServer, MessagerStreamHandler, AIActions, AIActionParams, getModel, models, AIMaskInferResponse, AIMaskInferResponseStream } from "@ai-mask/core";
 import { extensionState } from "./State";
 import { InternalMessage, InternalMessager } from "./InternalMessager";
 import { ModelLoadReport, AIMaskInferer } from "./AIMaskInfer";
@@ -77,7 +77,7 @@ export class AIMaskService {
         await extensionState.init(true)
     }
 
-    async onInfer(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
+    async onInfer(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<AIMaskInferResponseStream>): Promise<AIMaskInferResponse> {
         if (await extensionState.get('status') === 'infering') throw new Error('already infering')
 
         try {

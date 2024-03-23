@@ -10,10 +10,11 @@ const status_colors = {
     'Uncached': 'bg-orange-50',
 }
 
-const task_colors = {
+const task_colors: { [K: Model['task']]: string } = {
     'chat': 'bg-orange-400',
     'completion': 'bg-orange-400',
     'translation': 'bg-blue-400',
+    'feature-extraction': 'bg-yellow-400',
 }
 
 const vrams: any = config.mlc.appConfig.model_list.reduce((acc: any, item) => {
@@ -40,17 +41,17 @@ export default function ModelRow({ model, extensionState }: { model: Model, exte
             }
 
             <div className="w-full flex justify-stretch bg-black">
-                <div className={clsx("flex flex-col w-20 items-center p-2", status_colors[status])} >
+                <div className={clsx("flex flex-col w-16 items-center p-2", status_colors[status])} >
                     <h4 className="text-orange-950">Status</h4>
                     <p className="text-orange-900">{status}</p>
                 </div>
-                <div className="flex flex-col w-16 items-center p-2 bg-orange-300">
+                <div className="flex flex-col w-14 items-center p-2 bg-orange-300">
                     <h4 className="text-orange-950">VRAM</h4>
                     <p className="text-orange-900">{vrams[model.id] || '?'} GB</p>
                 </div>
-                <div className={clsx("flex flex-col w-24 items-center p-2 bg-green-300", task_colors[model.task])}>
+                <div className={clsx("flex flex-col w-28 items-center p-2 bg-green-300 px-1 py-2", task_colors[model.task])}>
                     <h4 className="text-orange-950">Task</h4>
-                    <p className="text-orange-900">{model.task}</p>
+                    <p className="text-orange-900 text-xs text-center">{model.task}</p>
                 </div>
                 <div className={clsx("flex flex-col flex-1 items-center p-2 bg-green-100")}>
                     <h4 className="text-orange-950">Engine</h4>

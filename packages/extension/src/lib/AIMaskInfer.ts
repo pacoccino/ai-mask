@@ -1,8 +1,8 @@
 import { ChatModule, InitProgressReport } from "@mlc-ai/web-llm";
 import { GenerateProgressCallback } from "@mlc-ai/web-llm/lib/types";
-import { env, pipeline, TranslationPipeline } from '@xenova/transformers';
+import { env, pipeline, Pipeline, TranslationPipeline, FeatureExtractionPipeline } from '@xenova/transformers';
 
-import { config, AIActionParams, MessagerStreamHandler, Model, ChatCompletionParams, CompletionParams, TranslationParams } from "@ai-mask/core";
+import { config, AIActionParams, MessagerStreamHandler, Model, ChatCompletionParams, FeatureExtractionParams, CompletionParams, TranslationParams, AIMaskInferResponseStream, AIMaskInferResponse, FeatureExtractionResponseStream, ChatCompletionResponseStream, ChatCompletionResponse, TranslationResponseStream, TranslationResponse, CompletionResponseStream, CompletionResponse, FeatureExtractionResponse } from "@ai-mask/core";
 
 export interface ModelLoadReport {
     progress: number
@@ -17,7 +17,7 @@ env.allowLocalModels = false;
 export class AIMaskInferer {
     model: Model
     inMemory: boolean = false
-    engineInstance: TranslationPipeline | ChatModule | null = null
+    engineInstance: Pipeline | ChatModule | null = null
 
     constructor(model: Model) {
         this.model = model;
@@ -36,9 +36,10 @@ export class AIMaskInferer {
         switch (this.model.engine) {
             case 'transformers.js':
                 let files: any[] = []
-
+                // @ts-ignore
                 this.engineInstance = await pipeline(
-                    'translation',
+                    // @ts-ignore
+                    this.model.task,
                     this.model.id,
                     {
                         progress_callback: (event: any) => {
@@ -91,7 +92,7 @@ export class AIMaskInferer {
 
         switch (this.model.engine) {
             case 'transformers.js': {
-                const engine = this.engineInstance as TranslationPipeline
+                const engine = this.engineInstance as Pipeline
                 await engine.dispose()
                 break;
             }
@@ -107,7 +108,7 @@ export class AIMaskInferer {
         this.inMemory = false
     }
 
-    async infer(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<string>) {
+    async infer(params: AIActionParams<'infer'>, streamhandler: MessagerStreamHandler<AIMaskInferResponseStream>): Promise<AIMaskInferResponse> {
         if (!this.isReady()) throw new Error('inferer not ready')
         if (this.model.id !== params.modelId) throw new Error('model id mismatch')
 
@@ -116,6 +117,8 @@ export class AIMaskInferer {
                 return this.taskChat(params.params as ChatCompletionParams, streamhandler)
             case 'completion':
                 return this.taskCompletion(params.params as CompletionParams, streamhandler)
+            case 'feature-extraction':
+                return this.taskFeatureExtraction(params.params as FeatureExtractionParams, streamhandler)
             case 'translation':
                 return this.taskTranslation(params.params as TranslationParams, streamhandler)
             default:
@@ -124,7 +127,7 @@ export class AIMaskInferer {
     }
 
 
-    async taskChat(params: ChatCompletionParams, streamhandler: MessagerStreamHandler<string>): Promise<string> {
+    async taskChat(params: ChatCompletionParams, streamhandler: MessagerStreamHandler<ChatCompletionResponseStream>): Promise<ChatCompletionResponse> {
         if (this.model.engine !== 'web-llm') throw new Error(`engine ${this.model.engine} not supported for completion`)
         const engine = this.getEngine() as ChatModule
         await engine.resetChat()
@@ -148,7 +151,7 @@ export class AIMaskInferer {
         return message
     }
 
-    async taskCompletion(params: CompletionParams, streamhandler: MessagerStreamHandler<string>): Promise<string> {
+    async taskCompletion(params: CompletionParams, streamhandler: MessagerStreamHandler<CompletionResponseStream>): Promise<CompletionResponse> {
         if (this.model.engine !== 'web-llm') throw new Error(`engine ${this.model.engine} not supported for completion`)
         const engine = this.getEngine() as ChatModule
         await engine.resetChat()
@@ -161,9 +164,10 @@ export class AIMaskInferer {
         return response
     }
 
-    async taskTranslation(params: TranslationParams, streamhandler: MessagerStreamHandler<string>): Promise<string> {
+    async taskTranslation(params: TranslationParams, streamhandler: MessagerStreamHandler<TranslationResponseStream>): Promise<TranslationResponse> {
         if (this.model.engine !== 'transformers.js') throw new Error(`engine ${this.model.engine} not supported for translation`)
 
+        // @ts-ignore
         const engine = this.getEngine() as TranslationPipeline
         const translationParams = params
 
@@ -182,5 +186,23 @@ export class AIMaskInferer {
 
         // @ts-ignore
         return response[0].translation_text
+    }
+    async taskFeatureExtraction(params: FeatureExtractionParams, streamhandler: MessagerStreamHandler<FeatureExtractionResponseStream>): Promise<FeatureExtractionResponse> {
+        if (this.model.engine !== 'transformers.js') throw new Error(`engine ${this.model.engine} not supported for translation`)
+
+        // @ts-ignore
+        const engine = this.getEngine() as FeatureExtractionPipeline
+
+        const response = await engine(
+            params.texts,
+            {
+                pooling: params.pooling,
+                normalize: params.normalize,
+            },
+        )
+        const list = response.tolist()
+        streamhandler(list)
+
+        return list
     }
 }

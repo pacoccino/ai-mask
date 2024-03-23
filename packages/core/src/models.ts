@@ -1,11 +1,5 @@
-export type Model = {
-    id: string
-    name: string
-    engine: 'web-llm' | 'transformers.js',
-    task: 'completion' | 'chat' | 'translation',
-}
 
-export const models: Model[] = [
+export const models = [
     {
         id: 'gemma-2b-it-q4f32_1',
         name: 'Gemma 2B',
@@ -36,7 +30,15 @@ export const models: Model[] = [
         engine: 'transformers.js',
         task: 'translation',
     },
+    {
+        id: 'Xenova/all-MiniLM-L6-v2',
+        name: 'MiniLM L6 v2',
+        engine: 'transformers.js',
+        task: 'feature-extraction'
+    },
 ]
+
+export type Model = typeof models[number]
 
 export function getModel(id: Model['id']): Model | undefined {
     return models.find(model => model.id == id)
