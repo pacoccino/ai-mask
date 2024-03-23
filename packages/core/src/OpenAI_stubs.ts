@@ -26,5 +26,7 @@ export interface ChatCompletionParams {
     max_tokens?: number
     temperature?: number
 }
+export type ChatCompletionResponse = string
+export type ChatCompletionResponseStream = string
 
 // TODO directly use OpenAI SDK type

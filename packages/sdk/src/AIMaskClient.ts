@@ -1,5 +1,6 @@
-import { Model, ExtensionMessagerClient, MessagerStreamHandler, ExtensionMessageRequestData, AIActions, AIAction, ChatCompletionParams, TranslationParams } from "@ai-mask/core";
+import { Model, ExtensionMessagerClient, MessagerStreamHandler, AIActions, AIAction, ChatCompletionParams, TranslationParams, TranslationResponseStream } from "@ai-mask/core";
 import { createFakePort } from './utils'
+import { FeatureExtractionParams, FeatureExtractionResponse, TranslationResponse, ChatCompletionResponse, ChatCompletionResponseStream } from "@ai-mask/core";
 
 export interface InferOptionsBase {
     modelId: Model['id']
@@ -68,9 +69,9 @@ export class AIMaskClient {
      }
      */
 
-    async chat(params: ChatCompletionParams, options: InferOptionsNonStreaming): Promise<string>
-    async chat(params: ChatCompletionParams, options: InferOptionsStreaming): Promise<AsyncGenerator<string>>
-    async chat(params: ChatCompletionParams, options: InferOptions): Promise<string | AsyncGenerator<string>> {
+    async chat(params: ChatCompletionParams, options: InferOptionsNonStreaming): Promise<ChatCompletionResponse>
+    async chat(params: ChatCompletionParams, options: InferOptionsStreaming): Promise<AsyncGenerator<ChatCompletionResponseStream>>
+    async chat(params: ChatCompletionParams, options: InferOptions): Promise<ChatCompletionResponse | AsyncGenerator<ChatCompletionResponseStream>> {
         const request: AIAction<'infer'> = {
             action: 'infer',
             params: {
@@ -87,9 +88,9 @@ export class AIMaskClient {
         }
     }
 
-    async translate(params: TranslationParams, options: InferOptionsNonStreaming): Promise<string>
-    async translate(params: TranslationParams, options: InferOptionsStreaming): Promise<AsyncGenerator<string>>
-    async translate(params: TranslationParams, options: InferOptions): Promise<string | AsyncGenerator<string>> {
+    async translate(params: TranslationParams, options: InferOptionsNonStreaming): Promise<TranslationResponse>
+    async translate(params: TranslationParams, options: InferOptionsStreaming): Promise<AsyncGenerator<TranslationResponseStream>>
+    async translate(params: TranslationParams, options: InferOptions): Promise<TranslationResponse | AsyncGenerator<TranslationResponseStream>> {
         const request: AIAction<'infer'> = {
             action: 'infer',
             params: {
@@ -104,6 +105,18 @@ export class AIMaskClient {
         } else {
             return this.request(request)
         }
+    }
+
+    async featureExtraction(params: FeatureExtractionParams, options: InferOptionsNonStreaming): Promise<FeatureExtractionResponse> {
+        const request: AIAction<'infer'> = {
+            action: 'infer',
+            params: {
+                modelId: options.modelId,
+                task: 'feature-extraction',
+                params,
+            },
+        }
+        return this.request(request)
     }
 
     async getModels(): Promise<Model[]> {
