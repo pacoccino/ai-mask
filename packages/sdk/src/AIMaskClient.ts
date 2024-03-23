@@ -1,5 +1,6 @@
 import { Model, ExtensionMessagerClient, MessagerStreamHandler, ExtensionMessageRequestData, AIActions, AIAction, ChatCompletionParams, TranslationParams } from "@ai-mask/core";
 import { createFakePort } from './utils'
+import { AIMaskPassTransformers } from "./AIMaskPassTransformers";
 
 export interface InferOptionsBase {
     modelId: Model['id']
@@ -16,9 +17,14 @@ export type InferOptions = InferOptionsNonStreaming | InferOptionsStreaming
 
 export class AIMaskClient {
     messager: ExtensionMessagerClient<AIActions>
+    transformers: AIMaskPassTransformers
 
     constructor(params?: { name?: string, port?: chrome.runtime.Port }) {
+        if (!params?.port && !AIMaskClient.isExtensionAvailable()) {
+            throw new Error('AI-Mask extension is not available')
+        }
         this.messager = new ExtensionMessagerClient<AIActions>({ name: params?.name || 'ai-mask-app', port: params?.port })
+        this.transformers = new AIMaskPassTransformers(this)
     }
 
     static isExtensionAvailable() {
@@ -36,11 +42,11 @@ export class AIMaskClient {
         this.messager.dispose()
     }
 
-    private async request<T>(request: AIAction<T>, streamCallback?: MessagerStreamHandler): Promise<any> {
+    async request<T>(request: AIAction<T>, streamCallback?: MessagerStreamHandler): Promise<any> {
         return this.messager.send(request, streamCallback)
     }
 
-    private async *requestStream<T>(request: AIAction<T>): AsyncGenerator<string> {
+    async *requestStream<T>(request: AIAction<T>): AsyncGenerator<string> {
         let resolve: (data: string) => void
         let done = false
         let promise = new Promise<string>(r => resolve = r)

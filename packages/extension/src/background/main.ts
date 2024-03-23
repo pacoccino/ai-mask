@@ -1,3 +1,4 @@
+import { AIMaskService } from "../lib/AIMaskService";
 import { InternalMessager } from "../lib/InternalMessager";
 
 console.log('hello from background')
@@ -42,6 +43,7 @@ async function setupOffscreenDocument() {
 }
 
 InternalMessager.listen(async () => {
-    console.log('received message')
+    // console.log('received message')
     await setupOffscreenDocument()
 })
+new AIMaskService()

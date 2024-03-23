@@ -1,4 +1,4 @@
-import { ExtensionMessagerServer, MessagerStreamHandler, AIActions, AIActionParams, getModel, models } from "@ai-mask/core";
+import { ExtensionMessagerServer, MessagerStreamHandler, AIActions, AIActionParams, getModel, models, Model, EngineStubParams } from "@ai-mask/core";
 import { extensionState } from "./State";
 import { InternalMessage, InternalMessager } from "./InternalMessager";
 import { ModelLoadReport, AIMaskInferer } from "./AIMaskInfer";
@@ -17,7 +17,7 @@ export class AIMaskService {
         extensionState.init().catch(console.error)
     }
 
-    async getInferer(params: AIActionParams<'infer'>): Promise<AIMaskInferer> {
+    async getInferer(modelId: Model['id'], engine?: Model['engine'], engineParams?: EngineStubParams['engineParams']): Promise<AIMaskInferer> {
         const progressHandler = (report: ModelLoadReport) => {
             if (!this.inferer) return
             const modelId = this.inferer.model.id
@@ -27,7 +27,7 @@ export class AIMaskService {
         }
 
         if (this.inferer) {
-            if (this.inferer.model.id === params.modelId) {
+            if (this.inferer.model.id === modelId) {
                 if (this.inferer.isReady()) return this.inferer
                 else {
                     await extensionState.set('status', 'loading')
@@ -38,18 +38,15 @@ export class AIMaskService {
                 await this.unloadModel()
             }
         }
-        const model = await getModel(params.modelId)
+        const model = await getModel(modelId, engine)
         if (!model) {
-            throw new Error('model not found')
-        }
-        if (model.task !== params.task) {
-            throw new Error('incompatible task and model')
+            throw new Error(`model ${modelId} not found`)
         }
 
         await extensionState.set('status', 'loading')
-        this.inferer = new AIMaskInferer(model)
+        this.inferer = new AIMaskInferer(model, engineParams)
         await this.inferer.load(progressHandler)
-        await extensionState.setCached(params.modelId)
+        await extensionState.setCached(modelId)
         await extensionState.set('status', 'loaded')
         await extensionState.set('loaded_model', model.id)
         return this.inferer
@@ -81,9 +78,26 @@ export class AIMaskService {
         if (await extensionState.get('status') === 'infering') throw new Error('already infering')
 
         try {
-            const inferer = await this.getInferer(params)
+            const inferer = await this.getInferer(params.modelId)
             await extensionState.set('status', 'infering')
             const response = await inferer.infer(params, streamhandler)
+
+            await extensionState.set('status', 'loaded')
+            return response
+        } catch (error) {
+            await extensionState.set('status', 'error')
+            await extensionState.set('error', JSON.stringify(error))
+            throw error
+        }
+    }
+
+    async onEngineStub(params: AIActionParams<'engine_stub'>, streamhandler: MessagerStreamHandler<string>): Promise<string> {
+        if (await extensionState.get('status') === 'infering') throw new Error('already infering')
+
+        try {
+            const inferer = await this.getInferer(params.modelId, params.engine, params.engineParams)
+            await extensionState.set('status', 'infering')
+            const response = await inferer.stub(params.callParams, streamhandler)
 
             await extensionState.set('status', 'loaded')
             return response
@@ -112,6 +126,8 @@ export class AIMaskService {
         switch (request.action) {
             case 'infer':
                 return this.onInfer(request.params, streamhandler)
+            case 'engine_stub':
+                return this.onEngineStub(request.params, streamhandler)
             case 'get_models':
                 return models
             default:

@@ -16,6 +16,21 @@ export type AIMaskInferParams =
     | ChatCompletionParams
     | TranslationParams
 
+type EngineStubParamsBase = {
+    engine: Model['engine']
+    modelId: Model['id']
+    engineParams: any
+    callParams: any[]
+}
+
+export interface TransformersStubParams extends EngineStubParamsBase {
+    engine: 'transformers.js'
+    engineParams: {
+        task: Model['task']
+    }
+}
+
+export type EngineStubParams = TransformersStubParams
 
 export type AIActions =
     | ExtensionMessageRequestData<'infer', {
@@ -23,6 +38,7 @@ export type AIActions =
         task: Model['task']
         params: AIMaskInferParams
     }>
+    | ExtensionMessageRequestData<'engine_stub', EngineStubParams>
     | ExtensionMessageRequestData<'get_models'>
 
 export type AIAction<T> = AIActions & { action: T }
