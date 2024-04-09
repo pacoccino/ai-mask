@@ -127,34 +127,42 @@ export class AIMaskClient {
     }
 
     // TODO: only one worker can be used with AIMask atm
-    provideWorkerPort(worker: Worker) {
-        worker.addEventListener('message', ({ data }) => {
-            if (data._AIMaskWorkerPortRequest) {
-                const { port1: mainPort, port2: workerPort } = new MessageChannel();
-
-                this.messager.setPassthroughListener((message) => {
-                    mainPort.postMessage(message)
-                })
-
-                mainPort.onmessage = (event) => {
-                    const message = event.data
-                    this.messager.passthroughRequest(message)
+    async provideWorkerPort(worker: Worker, ttl: number = 10000): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const timeout = ttl && setTimeout(() => {
+                reject(new Error('[AIMaskClient] No worker listened for a port.'))
+            }, ttl)
+            worker.addEventListener('message', ({ data }) => {
+                if (data._AIMaskWorkerPortRequest) {
+                    ttl && clearInterval(timeout)
+                    
+                    const { port1: mainPort, port2: workerPort } = new MessageChannel();
+    
+                    this.messager.setPassthroughListener((message) => {
+                        mainPort.postMessage(message)
+                    })
+    
+                    mainPort.onmessage = (event) => {
+                        const message = event.data
+                        this.messager.passthroughRequest(message)
+                    }
+    
+                    worker.postMessage({ _AIMaskWorkerPort: workerPort }, [workerPort]);
+                    resolve();
                 }
-
-                worker.postMessage({ _AIMaskWorkerPort: workerPort }, [workerPort]);
-            }
+            })
         })
     }
 
-    static async getWorkerClient() {
+    static async getWorkerClient(ttl: number = 10000) {
         return new Promise<AIMaskClient>((resolve, reject) => {
-            const timeout = setTimeout(() => {
-                reject(new Error('[AIMaskWorkerClient] Did not receive worker port, did you send from main thread with aiMask.sendWorkerPort(worker) ?'))
-            }, 2000)
+            const timeout = ttl && setTimeout(() => {
+                reject(new Error('[AIMaskWorkerClient] Did not receive worker port, did you send from main thread with aiMask.sendWorkerPort(worker) ?'))
+            }, ttl)
             const listener = ({ data }: any) => {
                 if (data._AIMaskWorkerPort) {
                     self.removeEventListener("message", listener)
-                    clearInterval(timeout)
+                    ttl && clearInterval(timeout)
                     const fakePort = createFakePort(data._AIMaskWorkerPort)
                     const aiMaskClient = new AIMaskClient({ port: fakePort })
                     resolve(aiMaskClient)

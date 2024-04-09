@@ -6,8 +6,8 @@ export default function App() {
   const { aiMaskClient, clientState } = useAIMask()
   return (
     <div className="flex flex-col items-center p-4 h-screen">
-      <h1>AI-Mask Demo App</h1>
-      <p className='mb-4'>Example app for using AI-Mask Chrome extension for AI inference</p>
+      <h1>AI-Mask Demo App (worker)</h1>
+      <p className='mb-4'>Example app for using AI-Mask Chrome extension within a web worker for AI inference</p>
 
       <div className='flex flex-row mb-4 w-full justify-center space-x-2'>
         <div className="w-1/2 max-w-64">
