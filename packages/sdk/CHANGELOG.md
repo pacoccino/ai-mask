@@ -1,5 +1,11 @@
 # @ai-mask/sdk
 
+## 0.9.0
+
+### Minor Changes
+
+- async provideWorkerPort
+
 ## 0.8.0
 
 ### Minor Changes
